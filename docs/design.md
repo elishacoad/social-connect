@@ -1,0 +1,114 @@
+# Design
+
+## Overall Aesthetic
+
+- Tactile, film-like, warm, authentic, nostalgic, soft, temporal
+- Polaroid / film photography / faded memories / warm textures
+- Make what you see on the app as real as possible
+- Mimic real life as much as possible
+
+### Avoid
+
+- Hyper-clean startup UI
+- Glossy modern social aesthetics
+- Gamified visuals
+
+## Fade Visual Effects
+
+As relationships drift:
+
+- Lower saturation
+- Memory-like feeling
+- Film grain?
+- Softer contrast?
+- Slight opacity reduction?
+- Softer texture?
+
+Recent relationships: vivid, warm, sharp, colorful.
+Older relationships: muted, nostalgic, quieter, softer.
+
+## Core UX Flows
+
+### Onboarding
+
+- Connections happen through physical proximity and intentional mutual adding
+- No mass importing
+- Potentially invite-only (stronger culture, intentional growth, exclusivity, clustered real-world adoption)
+
+### Connect / Reconnect Flow
+
+- Both users open "Connect"
+- Front-facing camera opens with dynamic QR code
+- Point phones at each other
+- ~3 second interaction
+- Warm, soft, magical feel
+- Subtle glow/radar animation
+- Haptic feedback
+- "Finding each other..." state
+- Warm success transition
+- Simultaneous success animation on both devices
+
+### Home Screen
+
+- Land in moments feed/timeline
+- Camera CTA present
+- Participation encouraged, not forced
+
+### Posting Flow
+
+1. Camera opens (front-facing for connect, most recent (front/rare) for moments)
+2. One-take capture
+3. Optional tiny caption
+4. Moment "develops" like a Polaroid? (no preview, gradual reveal)(open question)
+5. Done
+
+### Feed
+
+- Chronological list of moments
+- Finite and exhaustible
+- Fake camera / film camera feel
+- Replies / comments inline
+- Strong connections could have visual emphasis
+
+### Profile
+
+- Post history (with potential friction scrolling far back)
+- Bio, interests, "ask me about..." prompts
+- Not a portfolio or curated identity
+
+### Faded / Drift Layer
+
+- Drifted friends accessible intentionally
+- Visually separated from active feed
+- Exact naming and discoverability TBD
+
+## Interaction Feel
+
+The app should feel:
+
+- Warm, calm, human, fleeting, intentional, low-pressure
+
+Moments should feel:
+
+- Calming, ceremonial, tactile
+
+Connection should feel:
+
+- Like a handshake or shared ritual, not scanning a QR code
+
+Reconnection should feel:
+
+- Emotionally satisfying (color returns, sharpness restored)
+
+## Naming Direction
+
+App name candidates: Connect, Loop, InTouch
+Rejected names: Ping, Bop, Tappy, FriendBop, CoNek, Letsmeet, MeetMe
+
+Action language:
+
+- Snapchat -> snap
+- BeReal -> bereal/post
+- This app -> connect/moment
+
+Inspirations: Locket (real photo sharing, Rollcall feature), Vero (no ads/algorithms), Snapchat, Bereal

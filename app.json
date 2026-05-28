@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "social-connect-temp",
-    "slug": "social-connect-temp",
+    "name": "social-connect",
+    "slug": "social-connect",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "socialconnecttemp",
+    "scheme": "socialconnect",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
