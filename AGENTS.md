@@ -10,7 +10,8 @@ Expo HAS CHANGED. Read the exact versioned docs at https://docs.expo.dev/version
 
 - Expo / React Native
 - TypeScript
-- NativeWind (Tailwind CSS styling, no component library)
+- NativeWind (Tailwind CSS styling)
+- React Native Reusables (shadcn/ui for RN, copy-paste components built on NativeWind)
 - Zustand (lightweight local state)
 
 ### Backend

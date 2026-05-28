@@ -21,3 +21,7 @@ Blue sky ideas and inspirations. Not committed to, not in scope — just worth r
 
 - **Notification quieting** — The app could suggest turning off notifications from other social apps, reinforcing intentional use.
 - **Collab posts** — If two people connect/reconnect and either posts shortly after, the moment could become a collab post — appearing on both people's feeds as a shared moment. Two perspectives of the same real-world interaction.
+
+## Misc
+
+- Look into how friendster implements bump connection on phones

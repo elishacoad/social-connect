@@ -47,6 +47,7 @@ Older relationships: muted, nostalgic, quieter, softer.
 - "Finding each other..." state
 - Warm success transition
 - Simultaneous success animation on both devices
+- Group hangouts: if multiple people are together, the flow should support connecting/reconnecting with several friends in one session (e.g. scan one after another without leaving the connect screen)
 
 ### Home Screen
 
@@ -111,4 +112,4 @@ Action language:
 - BeReal -> bereal/post
 - This app -> connect/moment
 
-Inspirations: Locket (real photo sharing, Rollcall feature), Vero (no ads/algorithms), Snapchat, Bereal
+Inspirations: Locket (real photo sharing, Rollcall feature), Vero (no ads/algorithms), Snapchat, BeReal, Retro, Friendster
