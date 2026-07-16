@@ -16,6 +16,11 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # expo-env.d.ts is gitignored (per Expo's own convention) and normally
+      # regenerated as a side effect of running any `npx expo` command. CI
+      # never does that, so tsc would otherwise fail to resolve the
+      # `expo/types` reference that provides CSS/CSS-module import types.
+      - run: echo '/// <reference types="expo/types" />' > expo-env.d.ts
       - run: npx tsc --noEmit
       - run: npx expo lint
       - run: npx jest
