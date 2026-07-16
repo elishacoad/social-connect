@@ -1,5 +1,7 @@
 # Design
 
+**Implementation status:** the app currently renders in React Native Reusables' stock neutral/gray theme, not the warm/tactile direction below — that's unstarted visual design work, not a decision to keep it neutral. Fade visuals are implemented as plain opacity dimming for the same reason (grain/desaturation/texture below are still open). Swap the CSS variables in `global.css` and `tailwind.config.js` when ready to start on the real palette.
+
 ## Overall Aesthetic
 
 - Tactile, film-like, warm, authentic, nostalgic, soft, temporal
@@ -48,6 +50,7 @@ Older relationships: muted, nostalgic, quieter, softer.
 - Warm success transition
 - Simultaneous success animation on both devices
 - Group hangouts: if multiple people are together, the flow should support connecting/reconnecting with several friends in one session (e.g. scan one after another without leaving the connect screen)
+- MVP default: new connections and reconnects share this exact same flow technically; reconnecting from a friend's profile shows a lighter version (quieter copy, quicker success) instead of the full ritual — see `decisions.md`
 
 ### Home Screen
 
@@ -68,7 +71,7 @@ Older relationships: muted, nostalgic, quieter, softer.
 - Chronological list of moments
 - Finite and exhaustible
 - Fake camera / film camera feel
-- Replies / comments inline
+- Replies live on a dedicated moment screen, not inline on the feed card (see `decisions.md`) — tapping a moment opens it
 - Strong connections could have visual emphasis
 
 ### Profile
@@ -81,7 +84,7 @@ Older relationships: muted, nostalgic, quieter, softer.
 
 - Drifted friends accessible intentionally
 - Visually separated from active feed
-- Exact naming and discoverability TBD
+- MVP default: labeled "Drifted," reached via a link at the bottom of the Friends list (not a bottom tab) — see `decisions.md`. Naming/placement may still change once it's actually used
 
 ## Interaction Feel
 

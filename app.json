@@ -8,7 +8,9 @@
     "scheme": "socialconnect",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.elishacoad.social-connect",
+      "appleTeamId": "D68XT6F48J"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,6 +34,28 @@
           "android": {
             "image": "./assets/images/splash-icon.png",
             "imageWidth": 76
+          }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Social Connect uses your camera to capture moments and connect with friends.",
+          "microphonePermission": false
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Social Connect uses your photo library to set a profile picture."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "usePrecompiledModules": false
           }
         }
       ]

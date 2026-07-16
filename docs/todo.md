@@ -1,0 +1,4 @@
+- Wireframe app
+- gather references
+- pick fonts, colors, design system?
+- could figjam for anything else like flow or anything

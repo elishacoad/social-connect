@@ -201,7 +201,7 @@ Annual reflective recap of relationships, moments, reconnections, memories. Nost
 
 4. **Messaging depth** - How much messaging exists? Balance meaningful interaction vs. becoming another chat app.
 
-5. **Drift layer UX** - What is the faded/archive section called? How discoverable? How visually separated?
+5. ~~**Drift layer UX**~~ - Resolved with an MVP default — see `decisions.md`. Still open: whether the name/placement holds up once used for real.
 
 6. **Memory resurfacing** - Could occasionally surface old moments or drifted relationships. Must avoid manipulation or guilt.
 
@@ -211,15 +211,15 @@ Annual reflective recap of relationships, moments, reconnections, memories. Nost
 
 9. **Media type** - Picture only? Short video? Live Photo? What formats are allowed for moments? Video adds richness but increases friction, storage, and production pressure.
 
-10. **Reconnection UX** - New connections and reconnections are emotionally different. First connection is momentous — full QR ritual fits. But reconnecting with an existing friend may need something lighter (hold a button when nearby, simplified connect flow, etc.). Should they share the same UI or diverge?
+10. ~~**Reconnection UX**~~ - Resolved with an MVP default — see `decisions.md`. Still open: whether the lighter reconnect entry point feels different enough in practice.
 
 11. **Voice notes** - Are voice notes supported as a reply type or standalone interaction? They add warmth and intimacy but increase complexity and could push the app toward becoming a messaging platform.
 
-12. **Fade/decay model** - How exactly does relationship freshness decay over time? How are different interaction types weighted (physical meetup vs. reply vs. viewing)? What's the decay curve — linear, exponential, stepped? How long until someone fully fades?
+12. ~~**Fade/decay model**~~ - Resolved with an MVP default (linear per-signal decay, binary cutoff) — see `decisions.md`. Still open: whether the weighting/curve feels right once tested.
 
-13. **Posting constraints** - Several posting rules are undecided: One post per day limit? One take only (no retakes)? No editing after posting? These constraints drive authenticity but add friction — need to find the right balance.
+13. **Posting constraints** - One post per day is decided (DB-enforced) — see `decisions.md`. Still undecided: one take only (no retakes)? No editing after posting? Currently client-side UX only, not enforced.
 
-14. **Fade timeline** - How long until a relationship fully fades? Initial thinking was ~1 year, but this needs testing. Too short feels punitive, too long makes fading invisible.
+14. ~~**Fade timeline**~~ - Resolved with an MVP default (270 days physical / 90 days any interaction) — see `decisions.md`. Still open: whether these numbers hold up once tested with real usage.
 
 15. **Invite-only launch** - Should the app be invite-only? Benefits: intentional growth, stronger culture, exclusivity, clustered real-world adoption. Risks: cold start problem, slower growth. How many invites per user? Can invites expire?
 
