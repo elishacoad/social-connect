@@ -16,20 +16,6 @@ export async function createMoment(input: Omit<TablesInsert<'moments'>, 'author_
   return data;
 }
 
-export async function getMyMomentsToday() {
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) throw userError;
-
-  const today = new Date().toISOString().slice(0, 10);
-  const { data, error } = await supabase
-    .from('moments')
-    .select('*')
-    .eq('author_id', userData.user.id)
-    .eq('posted_date', today);
-  if (error) throw error;
-  return data;
-}
-
 export async function getMomentsByAuthor(authorId: string) {
   const { data, error } = await supabase
     .from('moments')
@@ -61,4 +47,20 @@ export async function getMoment(id: string) {
     .single();
   if (error) throw error;
   return data;
+}
+
+export async function updateMomentCaption(id: string, caption: string) {
+  const { data, error } = await supabase
+    .from('moments')
+    .update({ caption: caption || null })
+    .eq('id', id)
+    .select('*, author:profiles(display_name, username, avatar_url)')
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteMoment(id: string) {
+  const { error } = await supabase.from('moments').delete().eq('id', id);
+  if (error) throw error;
 }

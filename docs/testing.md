@@ -6,7 +6,7 @@ Read this before writing or running any test — commands, conventions, and the 
 
 **JS/React logic → Jest.** Pure functions and stores only — `src/utils/*.ts`, `src/lib/utils.ts`, `src/stores/*.ts`. Colocate as `<file>.test.ts`. Run with `npm test` (or `npm run test:watch`). Config lives in `package.json`'s `"jest"` key using the `jest-expo` preset — don't add a separate `jest.config.js`. These tests need no network, no database, no simulator; if a function doesn't touch Supabase/storage/the DOM, it gets a unit test here.
 
-**RLS / constraints / RPC logic → pgTAP.** This is the layer people building on Supabase usually skip, and it's the one that actually enforces the app's rules (fade cutoff, one-moment-per-day, mutual-connect matching) — none of that lives in TypeScript, it lives in Postgres, so a mocked Supabase client can't catch a bug in it. Tests live in `supabase/tests/database/*.sql`, written as pgTAP (`plan()`, `ok()`, `results_eq()`, `throws_ok()`, `finish()`), wrapped in `begin; ... rollback;` so nothing ever persists.
+**RLS / constraints / RPC logic → pgTAP.** This is the layer people building on Supabase usually skip, and it's the one that actually enforces the app's rules (fade cutoff, mutual-connect matching) — none of that lives in TypeScript, it lives in Postgres, so a mocked Supabase client can't catch a bug in it. Tests live in `supabase/tests/database/*.sql`, written as pgTAP (`plan()`, `ok()`, `results_eq()`, `throws_ok()`, `finish()`), wrapped in `begin; ... rollback;` so nothing ever persists.
 
 ## Running pgTAP tests
 

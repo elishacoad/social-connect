@@ -188,7 +188,6 @@ export type Database = {
           created_at: string;
           id: string;
           media_path: string;
-          posted_date: string | null;
         };
         Insert: {
           author_id: string;
@@ -196,7 +195,6 @@ export type Database = {
           created_at?: string;
           id?: string;
           media_path: string;
-          posted_date?: string | null;
         };
         Update: {
           author_id?: string;
@@ -204,7 +202,6 @@ export type Database = {
           created_at?: string;
           id?: string;
           media_path?: string;
-          posted_date?: string | null;
         };
         Relationships: [
           {

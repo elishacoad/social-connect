@@ -1,13 +1,12 @@
 -- Run with: supabase test db  (requires `supabase start`, i.e. Docker running)
 --
 -- Covers the business rules that are easy to get subtly wrong and hard to
--- catch by eyeballing the SQL: the one-moment-per-day constraint, the QR
--- connect RPC's matching logic, and the fade cutoff gating both the feed
--- and the friends list identically. Wrapped in BEGIN/ROLLBACK so nothing
--- here ever touches real data.
+-- catch by eyeballing the SQL: the QR connect RPC's matching logic, and the
+-- fade cutoff gating both the feed and the friends list identically.
+-- Wrapped in BEGIN/ROLLBACK so nothing here ever touches real data.
 begin;
 
-select plan(11);
+select plan(16);
 
 -- ── Setup: two real auth.users + profiles, bypassing RLS as the test role ──
 
@@ -30,21 +29,36 @@ update public.profiles set username = 'pgtap_user_a', display_name = 'PGTap User
 update public.profiles set username = 'pgtap_user_b', display_name = 'PGTap User B'
   where id = '22222222-2222-2222-2222-222222222222';
 
--- ── One moment per day ──────────────────────────────────────────────────
+-- ── No daily post limit: a second same-day moment is allowed ───────────
 
 set local role authenticated;
 set local "request.jwt.claims" = '{"sub":"11111111-1111-1111-1111-111111111111"}';
 
+insert into public.moments (author_id, media_path) values ('11111111-1111-1111-1111-111111111111', 'a/one.jpg');
+
 select lives_ok(
-  $$insert into public.moments (author_id, media_path) values ('11111111-1111-1111-1111-111111111111', 'a/one.jpg')$$,
-  'first moment of the day succeeds'
+  $$insert into public.moments (author_id, media_path) values ('11111111-1111-1111-1111-111111111111', 'a/two.jpg')$$,
+  'a second moment the same day is allowed — no daily post limit'
+);
+
+-- ── Editing: caption only, author only ─────────────────────────────────
+
+select lives_ok(
+  $$update public.moments set caption = 'edited caption' where media_path = 'a/one.jpg'$$,
+  'the author can edit their own moment''s caption'
+);
+
+select results_eq(
+  $$select caption from public.moments where media_path = 'a/one.jpg'$$,
+  ARRAY['edited caption'],
+  'the caption edit actually persisted'
 );
 
 select throws_ok(
-  $$insert into public.moments (author_id, media_path) values ('11111111-1111-1111-1111-111111111111', 'a/two.jpg')$$,
-  '23505',
-  'duplicate key value violates unique constraint "moments_author_id_posted_date_key"',
-  'a second moment the same day is rejected by the unique(author_id, posted_date) constraint'
+  $$update public.moments set media_path = 'a/hijacked.jpg' where media_path = 'a/one.jpg'$$,
+  '42501',
+  null,
+  'the author cannot change media_path — only the caption column is granted'
 );
 
 -- ── Visibility before any friendship exists ────────────────────────────
@@ -57,6 +71,17 @@ select results_eq(
   $$select count(*) from public.moments where author_id = '11111111-1111-1111-1111-111111111111'$$,
   ARRAY[0::bigint],
   'a stranger cannot see another user''s moment before they are friends'
+);
+
+-- RLS on update filters rows, it doesn't error — a non-owner's update just
+-- matches zero rows. Confirm the caption is unchanged from underneath RLS.
+update public.moments set caption = 'hijacked' where media_path = 'a/one.jpg';
+
+reset role;
+select results_eq(
+  $$select caption from public.moments where media_path = 'a/one.jpg'$$,
+  ARRAY['edited caption'],
+  'a non-owner''s update is silently filtered out by RLS, not applied'
 );
 
 -- ── Connect flow ────────────────────────────────────────────────────────
@@ -97,8 +122,8 @@ set local "request.jwt.claims" = '{"sub":"22222222-2222-2222-2222-222222222222"}
 
 select results_eq(
   $$select count(*) from public.moments where author_id = '11111111-1111-1111-1111-111111111111'$$,
-  ARRAY[1::bigint],
-  'the moment becomes visible to the new friend immediately after connecting'
+  ARRAY[2::bigint],
+  'both moments become visible to the new friend immediately after connecting'
 );
 
 -- ── Self-connect is rejected ────────────────────────────────────────────
@@ -163,6 +188,29 @@ select results_eq(
        or (user_b_id = '11111111-1111-1111-1111-111111111111' and user_a_id = '22222222-2222-2222-2222-222222222222')$$,
   ARRAY[1::bigint],
   'reconnecting revives the existing friendship instead of creating a duplicate row'
+);
+
+-- ── Deleting: author only ───────────────────────────────────────────────
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" = '{"sub":"22222222-2222-2222-2222-222222222222"}';
+
+delete from public.moments where media_path = 'a/two.jpg';
+
+reset role;
+select results_eq(
+  $$select count(*) from public.moments where media_path = 'a/two.jpg'$$,
+  ARRAY[1::bigint],
+  'a non-owner''s delete is silently filtered out by RLS, not applied'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" = '{"sub":"11111111-1111-1111-1111-111111111111"}';
+
+select lives_ok(
+  $$delete from public.moments where media_path = 'a/two.jpg'$$,
+  'the author can delete their own moment'
 );
 
 select * from finish();

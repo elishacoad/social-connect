@@ -22,7 +22,7 @@ export function useFeed() {
     // and correct — the DB still filters to what this user can see.
     const channel = supabase
       .channel('moments-feed')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'moments' }, refresh)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'moments' }, refresh)
       .subscribe();
 
     return () => {

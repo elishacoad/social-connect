@@ -217,7 +217,7 @@ Annual reflective recap of relationships, moments, reconnections, memories. Nost
 
 12. ~~**Fade/decay model**~~ - Resolved with an MVP default (linear per-signal decay, binary cutoff) — see `decisions.md`. Still open: whether the weighting/curve feels right once tested.
 
-13. **Posting constraints** - One post per day is decided (DB-enforced) — see `decisions.md`. Still undecided: one take only (no retakes)? No editing after posting? Currently client-side UX only, not enforced.
+13. **Posting constraints** - No posting-frequency cap — the one-post-per-day limit was tried and reverted, see `decisions.md`. Caption editing and deletion are now allowed (author-only), enforced at the DB layer. Still undecided: one take only (no retakes)?
 
 14. ~~**Fade timeline**~~ - Resolved with an MVP default (270 days physical / 90 days any interaction) — see `decisions.md`. Still open: whether these numbers hold up once tested with real usage.
 
