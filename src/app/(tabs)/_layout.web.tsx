@@ -1,4 +1,5 @@
 import { Tabs, TabList, TabTrigger, TabSlot, TabTriggerSlotProps, TabListProps } from 'expo-router/ui';
+import { CameraIcon, StackIcon, UsersIcon, type Icon } from 'phosphor-react-native';
 import { Pressable, View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
@@ -15,13 +16,13 @@ export default function AppTabs() {
       <TabList asChild>
         <CustomTabList>
           <TabTrigger name="index" href="/" asChild>
-            <TabButton>Timeline</TabButton>
+            <TabButton icon={StackIcon} />
           </TabTrigger>
           <TabTrigger name="camera" href="/camera" asChild>
-            <TabButton>Camera</TabButton>
+            <TabButton icon={CameraIcon} />
           </TabTrigger>
           <TabTrigger name="friends" href="/friends" asChild>
-            <TabButton>Friends</TabButton>
+            <TabButton icon={UsersIcon} />
           </TabTrigger>
         </CustomTabList>
       </TabList>
@@ -30,13 +31,19 @@ export default function AppTabs() {
   );
 }
 
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
+export function TabButton({
+  icon: IconComponent,
+  isFocused,
+  ...props
+}: TabTriggerSlotProps & { icon: Icon }) {
   return (
     <Pressable {...props} className="active:opacity-70">
-      <View className={cn('rounded-xl px-3 py-1.5', isFocused ? 'bg-accent' : 'bg-transparent')}>
-        <Text className={cn('text-sm', isFocused ? 'text-accent-foreground' : 'text-muted-foreground')}>
-          {children}
-        </Text>
+      <View className={cn('rounded-xl p-2', isFocused ? 'bg-accent' : 'bg-transparent')}>
+        <IconComponent
+          color={isFocused ? '#111111' : '#8a8a90'}
+          weight={isFocused ? 'fill' : 'regular'}
+          size={22}
+        />
       </View>
     </Pressable>
   );
