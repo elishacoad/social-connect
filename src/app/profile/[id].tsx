@@ -2,6 +2,7 @@ import {
   HandshakeIcon,
   Image02Icon,
   Logout03Icon,
+  PaintBoardIcon,
   PencilEdit01Icon,
   SunsetIcon,
 } from '@hugeicons/core-free-icons';
@@ -19,7 +20,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserAvatar } from '@/components/user-avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { useThemeColors } from '@/hooks/use-theme-colors';
@@ -146,17 +147,7 @@ function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }
   return (
     <View className="w-full max-w-[800px] px-5 pb-14 pt-2">
       <Animated.View entering={FadeInDown.duration(320)} className="items-center">
-        <Avatar alt={profile.display_name} className={`size-24 ${IMAGE_OUTLINE}`}>
-          {profile.avatar_url ? (
-            <AvatarImage source={{ uri: profile.avatar_url }} />
-          ) : (
-            <AvatarFallback>
-              <Text variant="h3" className="border-0">
-                {profile.display_name.charAt(0).toUpperCase()}
-              </Text>
-            </AvatarFallback>
-          )}
-        </Avatar>
+        <UserAvatar person={profile} size={24} className={IMAGE_OUTLINE} />
       </Animated.View>
 
       <Animated.View entering={FadeInDown.duration(320).delay(80)} className="mt-4 items-center gap-0.5">
@@ -176,8 +167,13 @@ function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }
         <Animated.View entering={FadeInDown.duration(320).delay(240)}>
           <Link href="/profile/edit" asChild>
             <Button variant="outline" className="mt-7 h-12 w-full rounded-2xl active:scale-[0.96]">
-              <HugeiconsIcon icon={PencilEdit01Icon} size={18} strokeWidth={1.8} />
-              <Text className="text-base">Edit profile</Text>
+              <HugeiconsIcon
+                icon={PencilEdit01Icon}
+                size={18}
+                strokeWidth={1.8}
+                color={colors.text}
+              />
+              <Text className="text-body">Edit profile</Text>
             </Button>
           </Link>
         </Animated.View>
@@ -186,7 +182,7 @@ function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }
           <Link href={{ pathname: '/connect', params: { friendId: profile.id } }} asChild>
             <Button className="mt-7 h-12 w-full rounded-2xl active:scale-[0.96]">
               <HugeiconsIcon icon={HandshakeIcon} color={onPrimary} size={20} strokeWidth={1.8} />
-              <Text className="text-base">Reconnect</Text>
+              <Text>Reconnect</Text>
             </Button>
           </Link>
         </Animated.View>
@@ -195,13 +191,13 @@ function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }
       <Animated.View
         entering={FadeInDown.duration(320).delay(320)}
         className="mt-8 flex-row items-center justify-between">
-        <Text variant="muted" className="text-xs uppercase tracking-widest">
+        <Text variant="overline">
           Moments
         </Text>
         {!isMe && (
           <View className="flex-row items-center gap-1.5">
             <HugeiconsIcon icon={SunsetIcon} color={colors.mutedForeground} size={15} strokeWidth={1 + ratio} />
-            <Text variant="muted" className="text-xs">
+            <Text variant="caption">
               {driftLabel(ratio)}
             </Text>
           </View>
@@ -211,13 +207,23 @@ function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }
       <MomentsGrid thumbnails={thumbnails} ratio={ratio} isMe={isMe} />
 
       {isMe && (
-        <Button
-          variant="ghost"
-          onPress={() => signOut()}
-          className="mt-10 h-11 self-center rounded-2xl px-5 active:scale-[0.96]">
-          <HugeiconsIcon icon={Logout03Icon} color={colors.mutedForeground} size={18} strokeWidth={1.5} />
-          <Text className="text-muted-foreground">Sign out</Text>
-        </Button>
+        <View className="mt-10 items-center gap-1">
+          {__DEV__ ? (
+            <Link href="/ds" asChild>
+              <Button variant="ghost" className="h-11 rounded-2xl px-5 active:scale-[0.96]">
+                <HugeiconsIcon icon={PaintBoardIcon} color={colors.mutedForeground} size={18} strokeWidth={1.5} />
+                <Text className="text-muted-foreground">Design system</Text>
+              </Button>
+            </Link>
+          ) : null}
+          <Button
+            variant="ghost"
+            onPress={() => signOut()}
+            className="h-11 rounded-2xl px-5 active:scale-[0.96]">
+            <HugeiconsIcon icon={Logout03Icon} color={colors.mutedForeground} size={18} strokeWidth={1.5} />
+            <Text className="text-muted-foreground">Sign out</Text>
+          </Button>
+        </View>
       )}
     </View>
   );

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { errorMessage } from '@/lib/errors';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -90,7 +91,7 @@ export default function OnboardingScreen() {
       // Root layout re-routes to (tabs) once profile.display_name is non-empty.
       await refreshProfile();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(errorMessage(err, 'Something went wrong'));
     } finally {
       setLoading(false);
     }
@@ -161,7 +162,7 @@ export default function OnboardingScreen() {
               </Pressable>
 
               <Button onPress={goNext} className="h-14 rounded-2xl">
-                <Text className="text-base font-semibold">{avatarUri ? 'Continue' : 'Skip for now'}</Text>
+                <Text variant="bodyStrong">{avatarUri ? 'Continue' : 'Skip for now'}</Text>
               </Button>
             </View>
           )}
@@ -181,7 +182,7 @@ export default function OnboardingScreen() {
                   aria-labelledby="display_name"
                   value={displayName}
                   onChangeText={setDisplayName}
-                  className="h-14 rounded-2xl px-4 text-base"
+                  className="h-14 rounded-2xl px-4"
                   placeholder="Your name"
                   autoFocus
                   returnKeyType="next"
@@ -194,12 +195,12 @@ export default function OnboardingScreen() {
                   <View className="pt-px">
                     <HugeiconsIcon icon={AlertCircleIcon} size={16} color={colors.destructive} strokeWidth={2} />
                   </View>
-                  <Text className="text-destructive flex-1 text-sm leading-5">{error}</Text>
+                  <Text className="text-destructive flex-1 text-footnote">{error}</Text>
                 </View>
               ) : null}
 
               <Button onPress={goNext} disabled={!displayName.trim()} className="h-14 rounded-2xl">
-                <Text className="text-base font-semibold">Continue</Text>
+                <Text variant="bodyStrong">Continue</Text>
               </Button>
             </View>
           )}
@@ -220,7 +221,7 @@ export default function OnboardingScreen() {
                   value={username}
                   onChangeText={setUsername}
                   autoCapitalize="none"
-                  className="h-14 rounded-2xl px-4 text-base"
+                  className="h-14 rounded-2xl px-4"
                   placeholder="lowercase, no spaces"
                   autoFocus
                   returnKeyType="done"
@@ -233,12 +234,12 @@ export default function OnboardingScreen() {
                   <View className="pt-px">
                     <HugeiconsIcon icon={AlertCircleIcon} size={16} color={colors.destructive} strokeWidth={2} />
                   </View>
-                  <Text className="text-destructive flex-1 text-sm leading-5">{error}</Text>
+                  <Text className="text-destructive flex-1 text-footnote">{error}</Text>
                 </View>
               ) : null}
 
               <Button onPress={handleFinish} disabled={loading || !username.trim()} className="h-14 rounded-2xl">
-                <Text className="text-base font-semibold">{loading ? 'Saving…' : 'Finish'}</Text>
+                <Text variant="bodyStrong">{loading ? 'Saving…' : 'Finish'}</Text>
               </Button>
             </View>
           )}

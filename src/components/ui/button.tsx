@@ -1,7 +1,8 @@
 import { TextClassContext } from '@/components/ui/text';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import { cn } from '@/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Platform, Pressable } from 'react-native';
+import { ActivityIndicator, Platform, Pressable } from 'react-native';
 
 const buttonVariants = cva(
   cn(
@@ -44,6 +45,8 @@ const buttonVariants = cva(
         sm: cn('h-9 gap-1.5 rounded-md px-3 sm:h-8', Platform.select({ web: 'has-[>svg]:px-2.5' })),
         lg: cn('h-11 rounded-md px-6 sm:h-10', Platform.select({ web: 'has-[>svg]:px-4' })),
         icon: 'h-10 w-10 sm:h-9 sm:w-9',
+        pill: 'h-10 gap-1.5 rounded-full px-4',
+        iconPill: 'size-10 rounded-full',
       },
     },
     defaultVariants: {
@@ -55,7 +58,7 @@ const buttonVariants = cva(
 
 const buttonTextVariants = cva(
   cn(
-    'text-foreground text-sm font-medium',
+    'text-foreground font-sans-semibold text-body',
     Platform.select({ web: 'pointer-events-none transition-colors' })
   ),
   {
@@ -79,6 +82,8 @@ const buttonTextVariants = cva(
         sm: '',
         lg: '',
         icon: '',
+        pill: '',
+        iconPill: '',
       },
     },
     defaultVariants: {
@@ -88,15 +93,32 @@ const buttonTextVariants = cva(
   }
 );
 
-type ButtonProps = React.ComponentProps<typeof Pressable> & React.RefAttributes<typeof Pressable> & VariantProps<typeof buttonVariants>;
+type ButtonProps = React.ComponentProps<typeof Pressable> &
+  React.RefAttributes<typeof Pressable> &
+  VariantProps<typeof buttonVariants> & {
+    /** Swaps the label for a spinner and blocks presses. */
+    loading?: boolean;
+  };
 
 // Variants that paint a fill read as broken when merely dimmed, so a disabled
 // one swaps to the muted surface instead; outline/ghost/link keep the dim.
 const FILLED_VARIANTS = ['default', 'destructive', 'secondary'];
 
-function Button({ className, variant, size, ...props }: ButtonProps) {
+function Button({ className, variant, size, loading, children, ...props }: ButtonProps) {
+  const colors = useThemeColors();
+  // A loading button keeps its fill — flipping it to the disabled surface
+  // mid-action reads as "the button broke", not "the button is working".
+  // Only `disabled` drives appearance; both drive press-blocking.
   const disabled = Boolean(props.disabled);
   const filled = FILLED_VARIANTS.includes(variant ?? 'default');
+
+  const spinnerColor = disabled
+    ? colors.mutedForeground
+    : variant === 'destructive'
+      ? 'white'
+      : filled
+        ? colors.primaryForeground
+        : colors.mutedForeground;
 
   return (
     <TextClassContext.Provider
@@ -108,8 +130,11 @@ function Button({ className, variant, size, ...props }: ButtonProps) {
           className
         )}
         role="button"
+        accessibilityState={{ disabled, busy: Boolean(loading) }}
         {...props}
-      />
+        disabled={disabled || Boolean(loading)}>
+        {loading ? <ActivityIndicator size="small" color={spinnerColor} /> : children}
+      </Pressable>
     </TextClassContext.Provider>
   );
 }

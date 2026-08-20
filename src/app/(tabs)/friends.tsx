@@ -2,11 +2,11 @@ import { ArrowDown01Icon, ArrowRight01Icon, ArrowUp01Icon, UserAdd01Icon, UserGr
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, Pressable, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ProfileAvatarHeader } from '@/components/profile-avatar-header';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserAvatar } from '@/components/user-avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { Friendship, useFriends } from '@/hooks/use-friends';
@@ -31,17 +31,9 @@ function FriendRow({ friendship, drifted = false }: { friendship: Friendship; dr
         <View
           className="rounded-full border-2 p-[3px]"
           style={{ borderColor: `rgba(120,120,124,${0.08 + 0.34 * ratio})` }}>
-          <Avatar alt={friend.display_name} className="size-11" style={{ opacity: presence }}>
-            {friend.avatar_url ? (
-              <AvatarImage source={{ uri: friend.avatar_url }} />
-            ) : (
-              <AvatarFallback>
-                <Text className="border-0">{friend.display_name.charAt(0).toUpperCase()}</Text>
-              </AvatarFallback>
-            )}
-          </Avatar>
+          <UserAvatar person={friend} size={11} style={{ opacity: presence }} />
         </View>
-        <Text className="flex-1 font-semibold" numberOfLines={1} style={{ opacity: presence }}>
+        <Text variant="bodyStrong" className="flex-1" numberOfLines={1} style={{ opacity: presence }}>
           {friend.display_name}
         </Text>
         <HugeiconsIcon icon={ArrowRight01Icon} size={18} color={colors.mutedForeground} strokeWidth={2} />
@@ -107,10 +99,10 @@ function DriftedSection({
         onPress={onToggle}
         className="flex-row items-center justify-between py-3 active:opacity-60">
         <View className="flex-row items-center gap-2">
-          <Text variant="muted" className="text-sm font-medium">
+          <Text variant="label">
             Drifted
           </Text>
-          <Text variant="muted" className="text-sm tabular-nums opacity-70">
+          <Text variant="muted" className="tabular-nums opacity-70">
             {faded.length}
           </Text>
         </View>
@@ -124,7 +116,7 @@ function DriftedSection({
 
       {expanded ? (
         <View className="pt-1">
-          <Text variant="muted" className="pb-1 text-xs leading-4">
+          <Text variant="caption" className="pb-1">
             Still here, just quieter. Meeting again brings them back.
           </Text>
           {faded.map((friendship, i) => (
@@ -141,8 +133,18 @@ function DriftedSection({
 
 export default function FriendsScreen() {
   const colors = useThemeColors();
-  const { friendships, faded, loading } = useFriends();
+  const { friendships, faded, loading, refresh } = useFriends();
   const [showDrifted, setShowDrifted] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function handleRefresh() {
+    setRefreshing(true);
+    try {
+      await refresh();
+    } finally {
+      setRefreshing(false);
+    }
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -180,7 +182,7 @@ export default function FriendsScreen() {
           ListEmptyComponent={
             faded.length > 0 ? (
               <View className="items-center py-6">
-                <Text variant="muted" className="text-center text-sm">
+                <Text variant="muted" className="text-center">
                   Everyone has drifted for now.
                 </Text>
               </View>
@@ -197,6 +199,7 @@ export default function FriendsScreen() {
               />
             ) : null
           }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
           className="flex-1"
         />
       )}

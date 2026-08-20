@@ -289,6 +289,10 @@ export type Database = {
       };
     };
     Functions: {
+      is_username_available: {
+        Args: { candidate: string; exclude_id?: string | null };
+        Returns: boolean;
+      };
       match_connect_session: {
         Args: { my_session_id: string; scanned_token: string };
         Returns: string;

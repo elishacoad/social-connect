@@ -20,12 +20,15 @@ export async function updateProfile(id: string, patch: TablesUpdate<'profiles'>)
   return data;
 }
 
-// excludeId lets a user re-save their own current username without it
-// colliding with itself in the uniqueness check.
+// Goes through an RPC rather than selecting from profiles: reads are scoped to
+// people you're connected to, so a plain query would call every stranger's
+// username free. excludeId lets a user re-save their own current username
+// without it colliding with itself.
 export async function isUsernameAvailable(username: string, excludeId?: string) {
-  let query = supabase.from('profiles').select('id').eq('username', username);
-  if (excludeId) query = query.neq('id', excludeId);
-  const { data, error } = await query.maybeSingle();
+  const { data, error } = await supabase.rpc('is_username_available', {
+    candidate: username,
+    exclude_id: excludeId ?? null,
+  });
   if (error) throw error;
-  return data === null;
+  return data;
 }

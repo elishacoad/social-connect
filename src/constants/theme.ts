@@ -1,6 +1,8 @@
 // NativeTabs (native tab bar) and SVG icon props need plain color values, not
 // classNames, so they can't consume NativeWind/RNR's CSS custom properties
-// directly. These mirror the light/dark values in global.css — keep both in sync.
+// directly. These mirror the light/dark values in global.css; theme.contract.test.ts
+// enforces that. `destructive` is the deliberate exception — global.css's
+// --destructive is a surface colour, this one tints a standalone icon.
 export const Colors = {
   light: {
     text: '#0a0a0a',

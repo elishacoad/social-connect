@@ -1,15 +1,15 @@
 import * as Crypto from 'expo-crypto';
 
 import { supabase } from '@/lib/supabase';
+import { getCurrentUserId } from '@/queries/session';
 
 export async function createConnectSession() {
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) throw userError;
+  const userId = await getCurrentUserId();
 
   const token = Crypto.randomUUID();
   const { data, error } = await supabase
     .from('connect_sessions')
-    .insert({ user_id: userData.user.id, token })
+    .insert({ user_id: userId, token })
     .select('*')
     .single();
   if (error) throw error;

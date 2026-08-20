@@ -1,6 +1,6 @@
 import { CameraType, CameraView, FlashMode, useCameraPermissions } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import { router } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import {
@@ -63,7 +63,7 @@ export default function CameraScreen() {
           <Button size="lg" onPress={requestPermission} className="mt-4 active:scale-[0.96]">
             <Text>Allow camera access</Text>
           </Button>
-          <Text variant="muted" className="mt-1 text-center text-xs opacity-70">
+          <Text variant="caption" className="mt-1 text-center opacity-70">
             You can change this later in Settings.
           </Text>
         </View>
@@ -79,28 +79,25 @@ export default function CameraScreen() {
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.7 });
       if (photo) {
         // photo.width/height come back in points, not the raw capture's actual pixel
-        // dimensions (they disagree whenever the capture scale isn't 1x), so re-measure
-        // the real image before cropping instead of trusting them.
-        const { width, height } = await manipulateAsync(photo.uri, []);
+        // dimensions (they disagree whenever the capture scale isn't 1x), so measure
+        // the decoded image rather than trusting them. Reusing one context keeps this
+        // to a single decode and a single write.
+        const context = ImageManipulator.manipulate(photo.uri);
+        const { width, height } = await context.renderAsync();
 
         // The preview crops the live feed to a square, but the raw capture keeps the
         // sensor's full (non-square) aspect ratio — crop to match what was framed.
         const size = Math.min(width, height);
-        const cropped = await manipulateAsync(
-          photo.uri,
-          [
-            {
-              crop: {
-                originX: (width - size) / 2,
-                originY: (height - size) / 2,
-                width: size,
-                height: size,
-              },
-            },
-          ],
-          { compress: 0.9, format: SaveFormat.JPEG }
-        );
-        router.push({ pathname: '/moment-caption', params: { uri: cropped.uri } });
+        const cropped = await context
+          .crop({
+            originX: (width - size) / 2,
+            originY: (height - size) / 2,
+            width: size,
+            height: size,
+          })
+          .renderAsync();
+        const saved = await cropped.saveAsync({ compress: 0.9, format: SaveFormat.JPEG });
+        router.push({ pathname: '/moment-caption', params: { uri: saved.uri } });
       }
     } finally {
       setCapturing(false);

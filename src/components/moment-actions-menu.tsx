@@ -33,7 +33,7 @@ export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; on
                 }}
                 className="flex-row items-center gap-3 rounded-xl px-4 py-3 active:bg-accent">
                 <HugeiconsIcon icon={PencilEdit02Icon} color={colors.mutedForeground} size={20} />
-                <Text className="text-base">Edit caption</Text>
+                <Text>Edit caption</Text>
               </Pressable>
               <View className="h-px bg-border" />
               <Pressable
@@ -43,13 +43,13 @@ export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; on
                 }}
                 className="flex-row items-center gap-3 rounded-xl px-4 py-3 active:bg-accent">
                 <HugeiconsIcon icon={Delete02Icon} color={colors.destructive} size={20} />
-                <Text className="text-base text-red-500">Delete moment</Text>
+                <Text className="text-destructive">Delete moment</Text>
               </Pressable>
             </Pressable>
             <Pressable
               onPress={() => setOpen(false)}
               className="mx-3 mt-2 items-center rounded-2xl bg-card p-3.5 shadow-sm shadow-black/10 active:bg-accent">
-              <Text className="text-base font-semibold">Cancel</Text>
+              <Text variant="bodyStrong">Cancel</Text>
             </Pressable>
           </SafeAreaView>
         </Pressable>

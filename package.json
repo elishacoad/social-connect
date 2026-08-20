@@ -3,6 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@bacons/apple-targets": "^5.0.0",
+    "@expo-google-fonts/figtree": "^0.4.1",
+    "@expo-google-fonts/fraunces": "^0.4.1",
     "@expo/ui": "~56.0.14",
     "@hugeicons/core-free-icons": "^4.2.3",
     "@hugeicons/react-native": "^1.0.15",
@@ -29,6 +32,7 @@
     "expo-image-manipulator": "~56.0.22",
     "expo-image-picker": "~56.0.21",
     "expo-linking": "~56.0.12",
+    "expo-notifications": "~56.0.24",
     "expo-router": "~56.2.7",
     "expo-secure-store": "~56.0.4",
     "expo-splash-screen": "~56.0.10",

@@ -24,6 +24,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { errorMessage } from '@/lib/errors';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
@@ -64,7 +65,7 @@ export default function ConnectScreen() {
       const friendshipId = await matchConnectSession(data, sessionId);
       setMatched(friendshipId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not connect');
+      setError(errorMessage(err, 'Could not connect'));
       hasScannedRef.current = false;
     }
   }

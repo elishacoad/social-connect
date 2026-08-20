@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { getCurrentUserId } from '@/queries/session';
 
 export async function getReplies(momentId: string) {
   const { data, error } = await supabase
@@ -11,12 +12,11 @@ export async function getReplies(momentId: string) {
 }
 
 export async function createReply(momentId: string, body: string) {
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) throw userError;
+  const userId = await getCurrentUserId();
 
   const { data, error } = await supabase
     .from('moment_replies')
-    .insert({ moment_id: momentId, author_id: userData.user.id, body })
+    .insert({ moment_id: momentId, author_id: userId, body })
     .select('*, author:profiles(display_name, username, avatar_url)')
     .single();
   if (error) throw error;

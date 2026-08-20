@@ -1,14 +1,17 @@
 import "../../global.css";
 
+import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { useAuth } from '@/hooks/use-auth';
+import { FONTS } from '@/lib/fonts';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { status, profile } = useAuth();
+  const [fontsLoaded, fontError] = useFonts(FONTS);
 
   // The signup trigger stub-provisions a profile with an empty display_name;
   // onboarding fills it in. Treat that as "not fully signed in yet" so a
@@ -19,7 +22,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AnimatedSplashOverlay />
-      {status !== 'loading' && (
+      {status !== 'loading' && (fontsLoaded || fontError) && (
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Protected guard={status === 'signedOut'}>
             <Stack.Screen name="(auth)/welcome" />
@@ -35,6 +38,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="connect" options={{ presentation: 'modal' }} />
             <Stack.Screen name="moment-caption" />
+            {__DEV__ && <Stack.Screen name="ds" options={{ headerShown: true }} />}
             <Stack.Screen
               name="profile/[id]"
               options={{

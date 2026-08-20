@@ -1,15 +1,15 @@
 import { supabase } from '@/lib/supabase';
+import { getCurrentUserId } from '@/queries/session';
 import { Tables, TablesInsert } from '@/types/database';
 
 export type MomentRow = Tables<'moments'>;
 
 export async function createMoment(input: Omit<TablesInsert<'moments'>, 'author_id'>) {
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) throw userError;
+  const userId = await getCurrentUserId();
 
   const { data, error } = await supabase
     .from('moments')
-    .insert({ ...input, author_id: userData.user.id })
+    .insert({ ...input, author_id: userId })
     .select('*')
     .single();
   if (error) throw error;

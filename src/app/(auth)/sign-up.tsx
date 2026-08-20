@@ -15,6 +15,7 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, TextInput
 import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { errorMessage } from '@/lib/errors';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,7 +40,7 @@ export default function SignUpScreen() {
 
   function fieldClassName(field: 'email' | 'password') {
     return cn(
-      'h-14 rounded-2xl pl-12 pr-4 text-base',
+      'h-14 rounded-2xl pl-12 pr-4',
       error ? 'border-destructive' : focused === field ? 'border-foreground' : 'border-input'
     );
   }
@@ -63,7 +64,7 @@ export default function SignUpScreen() {
       const { session } = await signUp(email.trim(), password);
       if (!session) setConfirmationSent(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(errorMessage(err, 'Something went wrong'));
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } finally {
       setLoading(false);
@@ -90,15 +91,12 @@ export default function SignUpScreen() {
           <Animated.View
             entering={FadeInDown.delay(100).duration(420)}
             className="max-w-[320px] gap-3">
-            <Text
-              variant="h3"
-              className="text-center text-[26px] leading-[34px]"
-              style={Platform.select({ ios: { letterSpacing: -0.4 } })}>
+            <Text variant="h2" className="text-center">
               Check your email
             </Text>
-            <Text variant="muted" className="text-center text-[15px] leading-[23px]">
+            <Text className="text-muted-foreground text-center">
               We sent a confirmation link to{' '}
-              <Text className="text-foreground text-[15px] font-semibold">{email.trim()}</Text>. Tap
+              <Text variant="bodyStrong" className="text-foreground">{email.trim()}</Text>. Tap
               it to finish creating your account.
             </Text>
           </Animated.View>
@@ -113,20 +111,17 @@ export default function SignUpScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1 gap-9 px-6 pt-14">
         <Animated.View entering={FadeInDown.duration(420)} className="gap-2">
-          <Text
-            variant="h2"
-            className="text-left text-[32px] leading-[38px]"
-            style={Platform.select({ ios: { letterSpacing: -0.6 } })}>
+          <Text variant="display" className="text-left">
             Create an account
           </Text>
-          <Text variant="muted" className="text-[15px] leading-[23px]">
+          <Text className="text-muted-foreground">
             Meet friends in person, then keep the moment going.
           </Text>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(90).duration(420)} className="gap-5">
           <View className="gap-2">
-            <Label nativeID="email" className="text-muted-foreground text-[13px]">
+            <Label nativeID="email" className="text-muted-foreground">
               Email
             </Label>
             <View className="justify-center">
@@ -160,7 +155,7 @@ export default function SignUpScreen() {
           </View>
 
           <View className="gap-2">
-            <Label nativeID="password" className="text-muted-foreground text-[13px]">
+            <Label nativeID="password" className="text-muted-foreground">
               Password
             </Label>
             <View className="justify-center">
@@ -219,7 +214,7 @@ export default function SignUpScreen() {
               />
               <Text
                 className={cn(
-                  'text-[13px]',
+                  'text-footnote',
                   passwordLongEnough ? 'text-foreground' : 'text-muted-foreground'
                 )}>
                 At least 8 characters
@@ -240,7 +235,7 @@ export default function SignUpScreen() {
                   color={dangerColor}
                 />
               </View>
-              <Text className="text-destructive flex-1 text-[13px] leading-[19px]">{error}</Text>
+              <Text className="text-destructive flex-1 text-footnote">{error}</Text>
             </Animated.View>
           ) : null}
 
@@ -255,7 +250,7 @@ export default function SignUpScreen() {
                 color={colors.primaryForeground}
               />
             ) : null}
-            <Text className="text-base font-semibold">
+            <Text variant="bodyStrong">
               {loading ? 'Creating account…' : 'Create account'}
             </Text>
           </Button>
@@ -266,7 +261,7 @@ export default function SignUpScreen() {
           className="flex-row items-center justify-center gap-1.5">
           <Text variant="muted">Already have an account?</Text>
           <Link href="/sign-in" className="px-2 py-2">
-            <Text className="text-primary text-sm font-semibold">Sign in</Text>
+            <Text variant="bodyStrong" className="text-primary">Sign in</Text>
           </Link>
         </Animated.View>
       </KeyboardAvoidingView>

@@ -13,6 +13,7 @@ import { useRef, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { errorMessage } from '@/lib/errors';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -48,7 +49,7 @@ export default function SignInScreen() {
       await signIn(email.trim(), password);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(errorMessage(err, 'Something went wrong'));
     } finally {
       setLoading(false);
     }
@@ -67,13 +68,13 @@ export default function SignInScreen() {
       setResetSent(true);
     } catch (err) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(errorMessage(err, 'Something went wrong'));
     }
   }
 
   function fieldClassName(field: Field) {
     return cn(
-      'h-14 rounded-2xl pl-12 pr-4 text-base',
+      'h-14 rounded-2xl pl-12 pr-4',
       error ? 'border-destructive' : focused === field ? 'border-foreground' : 'border-input'
     );
   }
@@ -90,17 +91,17 @@ export default function SignInScreen() {
           keyboardDismissMode="interactive"
           showsVerticalScrollIndicator={false}>
           <View className="gap-2">
-            <Text variant="h2" className="text-left text-4xl">
+            <Text variant="display" className="text-left">
               Welcome back
             </Text>
-            <Text variant="muted" className="text-base">
+            <Text className="text-muted-foreground">
               Sign in to see what your friends are up to.
             </Text>
           </View>
 
           <View className="mt-10 gap-5">
             <View className="gap-2">
-              <Label nativeID="email" className="text-sm">
+              <Label nativeID="email">
                 Email
               </Label>
               <View className="relative justify-center">
@@ -134,7 +135,7 @@ export default function SignInScreen() {
             </View>
 
             <View className="gap-2">
-              <Label nativeID="password" className="text-sm">
+              <Label nativeID="password">
                 Password
               </Label>
               <View className="relative justify-center">
@@ -186,7 +187,7 @@ export default function SignInScreen() {
                 hitSlop={8}
                 accessibilityRole="button"
                 className="self-end py-1">
-                <Text variant="muted" className="text-sm underline">
+                <Text variant="muted" className="underline">
                   Forgot password?
                 </Text>
               </Pressable>
@@ -202,7 +203,7 @@ export default function SignInScreen() {
                     color={dangerColor}
                   />
                 </View>
-                <Text className="text-destructive flex-1 text-sm">{error}</Text>
+                <Text className="text-destructive flex-1 text-footnote">{error}</Text>
               </View>
             ) : null}
 
@@ -216,7 +217,7 @@ export default function SignInScreen() {
                     color={mutedColor}
                   />
                 </View>
-                <Text variant="muted" className="flex-1 text-sm">
+                <Text variant="muted" className="flex-1">
                   Check your email for a password reset link.
                 </Text>
               </View>
@@ -229,17 +230,17 @@ export default function SignInScreen() {
               {loading ? (
                 <ActivityIndicator size="small" color={mutedColor} />
               ) : (
-                <Text className="text-base font-semibold">Sign in</Text>
+                <Text variant="bodyStrong">Sign in</Text>
               )}
             </Button>
           </View>
 
           <View className="mt-auto flex-row justify-center gap-1 pt-10">
-            <Text variant="muted" className="text-base">
+            <Text className="text-muted-foreground">
               New here?
             </Text>
             <Link href="/sign-up">
-              <Text className="text-primary text-base font-medium">Create an account</Text>
+              <Text variant="bodyStrong" className="text-primary">Create an account</Text>
             </Link>
           </View>
         </ScrollView>

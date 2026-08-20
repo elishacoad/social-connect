@@ -4,40 +4,38 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { Platform, Text as RNText, type Role } from 'react-native';
 
+/**
+ * The single source of truth for typography. Every variant bakes in family,
+ * size, line height and tracking together, so screens choose a *role*
+ * ("this is a caption") rather than assembling one from loose utilities.
+ *
+ * Weight is carried by the font family (font-sans-semibold), never by
+ * font-semibold — see src/lib/fonts.ts.
+ */
 const textVariants = cva(
-  cn(
-    'text-foreground text-base',
-    Platform.select({
-      web: 'select-text',
-    })
-  ),
+  cn('text-foreground font-sans text-body', Platform.select({ web: 'select-text' })),
   {
     variants: {
       variant: {
-        default: '',
-        h1: cn(
-          'text-center text-4xl font-extrabold tracking-tight',
-          Platform.select({ web: 'scroll-m-20 text-balance' })
-        ),
-        h2: cn(
-          'text-3xl font-semibold tracking-tight',
-          Platform.select({ web: 'scroll-m-20 first:mt-0' })
-        ),
-        h3: cn('text-2xl font-semibold tracking-tight', Platform.select({ web: 'scroll-m-20' })),
-        h4: cn('text-xl font-semibold tracking-tight', Platform.select({ web: 'scroll-m-20' })),
-        p: 'mt-3 leading-7 sm:mt-6',
-        blockquote: 'mt-4 border-l-2 pl-3 italic sm:mt-6 sm:pl-6',
-        code: cn(
-          'bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold'
-        ),
-        lead: 'text-muted-foreground text-xl',
-        large: 'text-lg font-semibold',
-        small: 'text-sm font-medium leading-none',
-        muted: 'text-muted-foreground text-sm',
+        // Display — Fraunces. Reserved for a screen's single loudest line.
+        display: 'font-display-bold text-display tracking-tight',
+        h1: 'font-display-bold text-h1 tracking-tight',
+        h2: 'font-display text-h2 tracking-tight',
+        h3: 'font-display text-h3 tracking-tight',
+
+        // UI — Figtree.
+        title: 'font-sans-semibold text-title',
+        body: '',
+        bodyStrong: 'font-sans-semibold',
+        label: 'text-muted-foreground font-sans-medium text-footnote',
+        muted: 'text-muted-foreground text-footnote',
+        caption: 'text-muted-foreground text-caption',
+        overline: 'text-muted-foreground font-sans-medium text-overline uppercase tracking-widest',
+        micro: 'text-muted-foreground text-micro',
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: 'body',
     },
   }
 );
@@ -47,19 +45,17 @@ type TextVariantProps = VariantProps<typeof textVariants>;
 type TextVariant = NonNullable<TextVariantProps['variant']>;
 
 const ROLE: Partial<Record<TextVariant, Role>> = {
+  display: 'heading',
   h1: 'heading',
   h2: 'heading',
   h3: 'heading',
-  h4: 'heading',
-  blockquote: Platform.select({ web: 'blockquote' as Role }),
-  code: Platform.select({ web: 'code' as Role }),
 };
 
 const ARIA_LEVEL: Partial<Record<TextVariant, string>> = {
+  display: '1',
   h1: '1',
   h2: '2',
   h3: '3',
-  h4: '4',
 };
 
 const TextClassContext = React.createContext<string | undefined>(undefined);
@@ -67,7 +63,7 @@ const TextClassContext = React.createContext<string | undefined>(undefined);
 function Text({
   className,
   asChild = false,
-  variant = 'default',
+  variant = 'body',
   ...props
 }: React.ComponentProps<typeof RNText> &
   React.RefAttributes<typeof RNText> &
@@ -86,4 +82,4 @@ function Text({
   );
 }
 
-export { Text, TextClassContext };
+export { Text, TextClassContext, textVariants };

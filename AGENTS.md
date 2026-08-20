@@ -72,6 +72,7 @@ Write a test when you touch: pure logic in `src/utils/*.ts` / `src/lib/utils.ts`
 
 - Read `docs/product.md` for product rules, scope, and open questions before implementing features
 - Read `docs/design.md` for UX flows and visual direction before building UI
+- Typography is a closed system: pick a `Text` variant from `src/components/ui/text.tsx`; never hand-roll size/weight classes (enforced by `typography.contract.test.ts`)
 - Read `docs/testing.md` before writing or running tests
 
 This file is a map, not a manual: each section above should stay short enough to hold in your head every session. When a topic grows detailed how-tos, gotchas, or command references, move them to a `docs/*.md` file and leave a one-line pointer here — same pattern as testing/product/design.

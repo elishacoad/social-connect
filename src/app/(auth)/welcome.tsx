@@ -4,7 +4,7 @@ import { HugeiconsIcon } from '@hugeicons/react-native';
 import type { IconSvgElement } from '@hugeicons/react-native';
 import * as Haptics from 'expo-haptics';
 import { useRef, useState } from 'react';
-import { Dimensions, Platform, useColorScheme, View } from 'react-native';
+import { Dimensions, useColorScheme, View } from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -98,13 +98,10 @@ function Slide({
       </Animated.View>
 
       <Animated.View style={[fade, copyStyle]} className="max-w-[320px] gap-3">
-        <Text
-          variant="h3"
-          className="text-center text-[26px] leading-[34px]"
-          style={Platform.select({ ios: { letterSpacing: -0.4 } })}>
+        <Text variant="h2" className="text-center">
           {slide.title}
         </Text>
-        <Text variant="muted" className="text-center text-[15px] leading-[23px]">
+        <Text className="text-muted-foreground text-center">
           {slide.body}
         </Text>
       </Animated.View>
@@ -179,13 +176,13 @@ export default function WelcomeScreen() {
           onPress={handleNext}
           className="h-14 rounded-2xl active:scale-[0.96]"
           accessibilityLabel={isLast ? 'Get started' : 'Next slide'}>
-          <Text className="text-base font-semibold">{isLast ? 'Get started' : 'Next'}</Text>
+          <Text variant="bodyStrong">{isLast ? 'Get started' : 'Next'}</Text>
         </Button>
 
         <View className="flex-row items-center justify-center gap-1.5">
           <Text variant="muted">Already have an account?</Text>
           <Link href="/sign-in" className="px-2 py-2">
-            <Text className="text-primary text-sm font-semibold">Sign in</Text>
+            <Text variant="bodyStrong" className="text-primary">Sign in</Text>
           </Link>
         </View>
       </View>

@@ -1,39 +1,25 @@
-import { useCallback, useEffect, useState } from 'react';
-
-import { supabase } from '@/lib/supabase';
+import { useAsyncResource } from '@/hooks/use-async-resource';
 import { getFeed } from '@/queries/moments';
 
 export type FeedMoment = Awaited<ReturnType<typeof getFeed>>[number];
 
+const EMPTY: FeedMoment[] = [];
+
 export function useFeed() {
-  const [moments, setMoments] = useState<FeedMoment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, loading, error, refresh, mutate } = useAsyncResource(getFeed, {
+    initialData: EMPTY,
+    errorFallback: 'Could not load your timeline',
+    // Reply counts ride along as an embedded aggregate, so a new reply changes
+    // the feed without touching the moments table — it needs its own binding.
+    realtime: {
+      channel: 'moments-feed',
+      tables: [{ table: 'moments' }, { table: 'moment_replies' }],
+    },
+  });
 
-  const refresh = useCallback(() => {
-    return getFeed()
-      .then((rows) => {
-        setMoments(rows);
-        setError(null);
-      })
-      .catch((err) => setError(err instanceof Error ? err.message : 'Could not load your timeline'))
-      .finally(() => setLoading(false));
-  }, []);
+  function removeMoment(id: string) {
+    mutate((moments) => moments.filter((moment) => moment.id !== id));
+  }
 
-  useEffect(() => {
-    refresh();
-
-    // RLS re-evaluates per row, so a broad refetch on any insert is simplest
-    // and correct — the DB still filters to what this user can see.
-    const channel = supabase
-      .channel('moments-feed')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'moments' }, refresh)
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [refresh]);
-
-  return { moments, loading, error, refresh };
+  return { moments: data, loading, error, refresh, removeMoment };
 }

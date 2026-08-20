@@ -5,6 +5,33 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      // One family per weight — see src/lib/fonts.ts for why weight cannot
+      // be expressed as font-semibold on top of a shared family.
+      fontFamily: {
+        sans: ["Figtree_400Regular"],
+        "sans-medium": ["Figtree_500Medium"],
+        "sans-semibold": ["Figtree_600SemiBold"],
+        "sans-bold": ["Figtree_700Bold"],
+        display: ["Fraunces_600SemiBold"],
+        "display-bold": ["Fraunces_700Bold"],
+      },
+      // Semantic type scale. Line height ships with the size so callers
+      // never pair a size with a mismatched leading-*.
+      fontSize: {
+        micro: ["10px", "13px"],
+        overline: ["11px", "14px"],
+        caption: ["12px", "16px"],
+        footnote: ["13px", "18px"],
+        body: ["15px", "22px"],
+        // No line height on purpose: a single-line TextInput centres on its
+        // font box, so an explicit lineHeight pushes the text off-centre.
+        input: "15px",
+        title: ["18px", "24px"],
+        h3: ["20px", "26px"],
+        h2: ["24px", "30px"],
+        h1: ["28px", "34px"],
+        display: ["32px", "38px"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

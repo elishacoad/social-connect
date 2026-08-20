@@ -15,6 +15,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { errorMessage } from '@/lib/errors';
 import { Input } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { useAuth } from '@/hooks/use-auth';
@@ -56,7 +57,7 @@ export default function MomentCaptionScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.dismissTo('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(errorMessage(err, 'Something went wrong'));
       setSharing(false);
     }
   }
@@ -96,7 +97,7 @@ export default function MomentCaptionScreen() {
                   {caption.length >= COUNTER_VISIBLE_FROM ? (
                     <Animated.View entering={FadeIn.duration(180)} exiting={FadeOut.duration(120)}>
                       <Text
-                        className={`text-right text-xs tabular-nums ${remaining <= 20 ? 'text-white/70' : 'text-white/30'}`}>
+                        className={`text-right text-caption tabular-nums ${remaining <= 20 ? 'text-white/70' : 'text-white/30'}`}>
                         {remaining}
                       </Text>
                     </Animated.View>
@@ -145,11 +146,11 @@ export default function MomentCaptionScreen() {
             <View className="min-h-10 w-full justify-center px-9 pt-4">
               {sharing ? (
                 <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(120)}>
-                  <Text className="text-center text-sm text-white/50">Sharing…</Text>
+                  <Text className="text-center text-footnote text-white/50">Sharing…</Text>
                 </Animated.View>
               ) : error ? (
                 <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(120)}>
-                  <Text numberOfLines={2} className="text-center text-sm text-red-400">
+                  <Text numberOfLines={2} className="text-center text-footnote text-red-400">
                     {error}
                   </Text>
                 </Animated.View>

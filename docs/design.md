@@ -1,6 +1,8 @@
 # Design
 
-**Implementation status:** the app currently renders in React Native Reusables' stock neutral/gray theme, not the warm/tactile direction below — that's unstarted visual design work, not a decision to keep it neutral. Fade visuals are implemented as plain opacity dimming for the same reason (grain/desaturation/texture below are still open). Swap the CSS variables in `global.css` and `tailwind.config.js` when ready to start on the real palette.
+**Implementation status:** typography has started on the warm/tactile direction — Fraunces (display) over Figtree (UI), wired as a semantic scale in `src/components/ui/text.tsx`. **Colour has not:** the app still renders React Native Reusables' stock neutral/gray, which is unstarted work rather than a decision to keep it neutral. Fade visuals are likewise still plain opacity dimming (grain/desaturation/texture below are open). Swap the CSS variables in `global.css` when ready to start on the real palette.
+
+Typography rules, so this doesn't erode: pick a `Text` variant rather than assembling one from utilities — each variant fixes family, size, line height and tracking together. Weight is carried by the font *family* (`font-sans-semibold`), never by `font-semibold`, because Google's static exports register non-400/700 weights as separate families and iOS otherwise synthesizes them. `src/components/ui/typography.contract.test.ts` fails the build if a screen reaches past the tokens.
 
 ## Overall Aesthetic
 

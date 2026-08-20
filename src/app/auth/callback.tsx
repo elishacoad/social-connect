@@ -22,6 +22,7 @@ export default function AuthCallbackScreen() {
   const { status, profile } = useAuth();
   const processedUrl = useRef<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isRecovery, setIsRecovery] = useState(false);
 
   useEffect(() => {
     if (!url || processedUrl.current === url) return;
@@ -37,6 +38,8 @@ export default function AuthCallbackScreen() {
           );
         }
 
+        setIsRecovery(params.type === 'recovery');
+
         const { code, access_token, refresh_token } = params;
         if (code) return supabase.auth.exchangeCodeForSession(code);
         if (access_token && refresh_token) return supabase.auth.setSession({ access_token, refresh_token });
@@ -51,14 +54,20 @@ export default function AuthCallbackScreen() {
   useEffect(() => {
     if (error || status === 'loading' || status === 'signedOut') return;
     const needsOnboarding = status === 'signedIn' && profile !== null && profile.display_name === '';
-    router.replace(needsOnboarding ? '/onboarding' : '/');
-  }, [error, status, profile]);
+    if (needsOnboarding) {
+      router.replace('/onboarding');
+      return;
+    }
+    // A recovery link only signs the user in — it never prompts for the new
+    // password — so send them somewhere they can actually set one.
+    router.replace(isRecovery ? '/profile/edit' : '/');
+  }, [error, status, profile, isRecovery]);
 
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <View className="flex-1 items-center justify-center gap-4 px-6">
-          <Text variant="h2" className="border-0 pb-0 text-center">
+          <Text variant="h2" className="text-center">
             Link expired
           </Text>
           <Text variant="muted" className="text-center">
