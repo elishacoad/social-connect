@@ -78,16 +78,21 @@ export default function CameraScreen() {
     try {
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.7 });
       if (photo) {
+        // photo.width/height come back in points, not the raw capture's actual pixel
+        // dimensions (they disagree whenever the capture scale isn't 1x), so re-measure
+        // the real image before cropping instead of trusting them.
+        const { width, height } = await manipulateAsync(photo.uri, []);
+
         // The preview crops the live feed to a square, but the raw capture keeps the
         // sensor's full (non-square) aspect ratio — crop to match what was framed.
-        const size = Math.min(photo.width, photo.height);
+        const size = Math.min(width, height);
         const cropped = await manipulateAsync(
           photo.uri,
           [
             {
               crop: {
-                originX: (photo.width - size) / 2,
-                originY: (photo.height - size) / 2,
+                originX: (width - size) / 2,
+                originY: (height - size) / 2,
                 width: size,
                 height: size,
               },
