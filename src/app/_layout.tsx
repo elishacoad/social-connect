@@ -5,12 +5,10 @@ import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { useAuth } from '@/hooks/use-auth';
-import { useDeepLinkSession } from '@/hooks/use-deep-link-session';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { status, profile } = useAuth();
-  useDeepLinkSession();
 
   // The signup trigger stub-provisions a profile with an empty display_name;
   // onboarding fills it in. Treat that as "not fully signed in yet" so a
@@ -47,6 +45,15 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
+              name="profile/edit"
+              options={{
+                headerShown: true,
+                title: 'Edit profile',
+                headerBackButtonDisplayMode: 'minimal',
+                presentation: 'modal',
+              }}
+            />
+            <Stack.Screen
               name="moment/[id]"
               options={{
                 headerShown: true,
@@ -56,6 +63,11 @@ export default function RootLayout() {
               }}
             />
           </Stack.Protected>
+
+          {/* Not first in the list — the first declared screen becomes the
+              default initial route on cold launch, and this one should only
+              ever be reached via an incoming Supabase redirect link. */}
+          <Stack.Screen name="auth/callback" />
         </Stack>
       )}
     </ThemeProvider>

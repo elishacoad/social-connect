@@ -1,4 +1,10 @@
-import { HandshakeIcon, Image02Icon, Logout03Icon, SunsetIcon } from '@hugeicons/core-free-icons';
+import {
+  HandshakeIcon,
+  Image02Icon,
+  Logout03Icon,
+  PencilEdit01Icon,
+  SunsetIcon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { Image } from 'expo-image';
 import { Link, useLocalSearchParams } from 'expo-router';
@@ -166,7 +172,16 @@ function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }
         </Animated.View>
       ) : null}
 
-      {!isMe && (
+      {isMe ? (
+        <Animated.View entering={FadeInDown.duration(320).delay(240)}>
+          <Link href="/profile/edit" asChild>
+            <Button variant="outline" className="mt-7 h-12 w-full rounded-2xl active:scale-[0.96]">
+              <HugeiconsIcon icon={PencilEdit01Icon} size={18} strokeWidth={1.8} />
+              <Text className="text-base">Edit profile</Text>
+            </Button>
+          </Link>
+        </Animated.View>
+      ) : (
         <Animated.View entering={FadeInDown.duration(320).delay(240)}>
           <Link href={{ pathname: '/connect', params: { friendId: profile.id } }} asChild>
             <Button className="mt-7 h-12 w-full rounded-2xl active:scale-[0.96]">

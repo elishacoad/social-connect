@@ -20,12 +20,12 @@ export async function updateProfile(id: string, patch: TablesUpdate<'profiles'>)
   return data;
 }
 
-export async function isUsernameAvailable(username: string) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('username', username)
-    .maybeSingle();
+// excludeId lets a user re-save their own current username without it
+// colliding with itself in the uniqueness check.
+export async function isUsernameAvailable(username: string, excludeId?: string) {
+  let query = supabase.from('profiles').select('id').eq('username', username);
+  if (excludeId) query = query.neq('id', excludeId);
+  const { data, error } = await query.maybeSingle();
   if (error) throw error;
   return data === null;
 }

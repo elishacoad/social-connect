@@ -58,7 +58,7 @@ export default function SignUpScreen() {
     try {
       // The on_auth_user_created trigger stub-provisions a profiles row.
       // If email confirmation is required, signUp() returns no session yet —
-      // useDeepLinkSession() picks up the session once the confirmation
+      // src/app/auth/callback.tsx picks up the session once the confirmation
       // link is tapped, and the root layout routes to onboarding from there.
       const { session } = await signUp(email.trim(), password);
       if (!session) setConfirmationSent(true);
