@@ -7,7 +7,7 @@ import { Animated, Easing, FlatList, Pressable, RefreshControl, View } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MomentActionsMenu } from '@/components/moment-actions-menu';
-import { ProfileAvatarHeader } from '@/components/profile-avatar-header';
+import { ScreenHeader } from '@/components/screen-header';
 import { UserAvatar } from '@/components/user-avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
@@ -225,12 +225,7 @@ export default function TimelineScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-row items-center gap-3 px-6 pb-3 pt-3">
-        <ProfileAvatarHeader />
-        <Text variant="h1" className="text-left">
-          Timeline
-        </Text>
-      </View>
+      <ScreenHeader title="Timeline" />
 
       <FlatList
         data={moments}

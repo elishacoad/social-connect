@@ -43,3 +43,6 @@ example
 /ios
 /android
 .gstack/
+
+# Git worktrees created by agent sessions
+.claude/worktrees/

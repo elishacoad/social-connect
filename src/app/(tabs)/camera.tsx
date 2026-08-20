@@ -20,7 +20,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ProfileAvatarHeader } from '@/components/profile-avatar-header';
+import { ScreenHeader } from '@/components/screen-header';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
@@ -109,9 +109,7 @@ export default function CameraScreen() {
   return (
     <View className="flex-1 bg-black">
       <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
-        <View className="px-4 pt-2">
-          <ProfileAvatarHeader />
-        </View>
+        <ScreenHeader />
 
         <View className="items-center px-6 pt-4">
           <View className="aspect-square w-full overflow-hidden rounded-[40px] bg-neutral-900">
