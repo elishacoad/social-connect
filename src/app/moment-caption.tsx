@@ -3,7 +3,7 @@ import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { Cancel01Icon, SentIcon } from '@hugeicons/core-free-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Keyboard, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import Animated, {
   FadeIn,
@@ -25,6 +25,7 @@ import { createMoment } from '@/queries/moments';
 const CAPTION_LIMIT = 140;
 const COUNTER_VISIBLE_FROM = 100;
 const SEND_SPRING = { damping: 20, stiffness: 400, mass: 0.6 };
+const CONTROLS_SPRING = { damping: 11, stiffness: 170, mass: 0.9 };
 
 export default function MomentCaptionScreen() {
   const { uri } = useLocalSearchParams<{ uri: string }>();
@@ -32,12 +33,33 @@ export default function MomentCaptionScreen() {
   const [caption, setCaption] = useState('');
   const [sharing, setSharing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
+    const hideSub = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const remaining = CAPTION_LIMIT - caption.length;
   const sendScale = useSharedValue(1);
+  const controlsScale = useSharedValue(1);
+
+  useEffect(() => {
+    controlsScale.set(withSpring(keyboardVisible ? 0 : 1, CONTROLS_SPRING));
+  }, [controlsScale, keyboardVisible]);
 
   const sendStyle = useAnimatedStyle(() => ({
     transform: [{ scale: sendScale.get() }],
+  }));
+
+  const controlsStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: controlsScale.get() }],
   }));
 
   const cardStyle = useAnimatedStyle(() => ({
@@ -65,7 +87,7 @@ export default function MomentCaptionScreen() {
   return (
     <View className="flex-1 bg-black">
       <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1">
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <Pressable className="px-6 pt-4" onPress={Keyboard.dismiss} accessible={false}>
             <Animated.View style={cardStyle} className="overflow-hidden rounded-[48px] bg-white/[0.06] p-2">
               <View className="aspect-square w-full overflow-hidden rounded-[40px] bg-neutral-900">
@@ -106,58 +128,61 @@ export default function MomentCaptionScreen() {
               </View>
             </Animated.View>
           </Pressable>
-
-          <View className="flex-1 items-center justify-center">
-            <View className="w-full flex-row items-center justify-center px-9">
-              <Pressable
-                onPress={() => router.back()}
-                disabled={sharing}
-                accessibilityRole="button"
-                accessibilityLabel="Discard this moment"
-                className={`absolute left-9 size-14 items-center justify-center rounded-full border border-white/10 bg-white/10 active:scale-[0.96] active:opacity-70 ${sharing ? 'opacity-30' : ''}`}>
-                <HugeiconsIcon icon={Cancel01Icon} color="white" size={22} strokeWidth={1.75} />
-              </Pressable>
-
-              <Animated.View style={sendStyle}>
-                <Pressable
-                  onPress={handleShare}
-                  onPressIn={() => {
-                    sendScale.set(withSpring(0.93, SEND_SPRING));
-                  }}
-                  onPressOut={() => {
-                    sendScale.set(withSpring(1, SEND_SPRING));
-                  }}
-                  disabled={sharing || !uri}
-                  accessibilityRole="button"
-                  accessibilityLabel="Share moment"
-                  accessibilityState={{ disabled: sharing || !uri, busy: sharing }}
-                  className={`size-[78px] items-center justify-center rounded-full border-[3px] border-white/90 shadow-lg shadow-black/40 ${uri ? '' : 'opacity-40'}`}>
-                  <View className="size-[62px] items-center justify-center rounded-full bg-white">
-                    {sharing ? (
-                      <ActivityIndicator color="black" />
-                    ) : (
-                      <HugeiconsIcon icon={SentIcon} color="black" size={26} strokeWidth={2.25} />
-                    )}
-                  </View>
-                </Pressable>
-              </Animated.View>
-            </View>
-
-            <View className="min-h-10 w-full justify-center px-9 pt-4">
-              {sharing ? (
-                <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(120)}>
-                  <Text className="text-center text-footnote text-white/50">Sharing…</Text>
-                </Animated.View>
-              ) : error ? (
-                <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(120)}>
-                  <Text numberOfLines={2} className="text-center text-footnote text-red-400">
-                    {error}
-                  </Text>
-                </Animated.View>
-              ) : null}
-            </View>
-          </View>
         </KeyboardAvoidingView>
+
+        <View className="flex-1 items-center justify-center">
+          <Animated.View
+            pointerEvents={keyboardVisible ? 'none' : 'auto'}
+            style={controlsStyle}
+            className="w-full flex-row items-center justify-center px-9">
+            <Pressable
+              onPress={() => router.back()}
+              disabled={sharing}
+              accessibilityRole="button"
+              accessibilityLabel="Discard this moment"
+              className={`absolute left-9 size-14 items-center justify-center rounded-full border border-white/10 bg-white/10 active:scale-[0.96] active:opacity-70 ${sharing ? 'opacity-30' : ''}`}>
+              <HugeiconsIcon icon={Cancel01Icon} color="white" size={22} strokeWidth={1.75} />
+            </Pressable>
+
+            <Animated.View style={sendStyle}>
+              <Pressable
+                onPress={handleShare}
+                onPressIn={() => {
+                  sendScale.set(withSpring(0.93, SEND_SPRING));
+                }}
+                onPressOut={() => {
+                  sendScale.set(withSpring(1, SEND_SPRING));
+                }}
+                disabled={sharing || !uri}
+                accessibilityRole="button"
+                accessibilityLabel="Share moment"
+                accessibilityState={{ disabled: sharing || !uri, busy: sharing }}
+                className={`size-[78px] items-center justify-center rounded-full border-[3px] border-white/90 shadow-lg shadow-black/40 ${uri ? '' : 'opacity-40'}`}>
+                <View className="size-[62px] items-center justify-center rounded-full bg-white">
+                  {sharing ? (
+                    <ActivityIndicator color="black" />
+                  ) : (
+                    <HugeiconsIcon icon={SentIcon} color="black" size={26} strokeWidth={2.25} />
+                  )}
+                </View>
+              </Pressable>
+            </Animated.View>
+          </Animated.View>
+
+          <View className="min-h-10 w-full justify-center px-9 pt-4">
+            {sharing ? (
+              <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(120)}>
+                <Text className="text-center text-footnote text-white/50">Sharing…</Text>
+              </Animated.View>
+            ) : error ? (
+              <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(120)}>
+                <Text numberOfLines={2} className="text-center text-footnote text-red-400">
+                  {error}
+                </Text>
+              </Animated.View>
+            ) : null}
+          </View>
+        </View>
       </SafeAreaView>
     </View>
   );
