@@ -13,7 +13,7 @@ export const FONT_SIZE_TOKENS = [
   'caption',
   'footnote',
   'body',
-  'input',
+  'field',
   'title',
   'h3',
   'h2',

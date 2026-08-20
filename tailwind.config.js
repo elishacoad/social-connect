@@ -25,7 +25,9 @@ module.exports = {
         body: ["15px", "22px"],
         // No line height on purpose: a single-line TextInput centres on its
         // font box, so an explicit lineHeight pushes the text off-centre.
-        input: "15px",
+        // Named "field", not "input": a fontSize key colliding with the
+        // "input" color key makes text-input resolve to the border colour.
+        field: "15px",
         title: ["18px", "24px"],
         h3: ["20px", "26px"],
         h2: ["24px", "30px"],
