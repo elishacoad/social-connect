@@ -11,15 +11,7 @@ import { HugeiconsIcon } from '@hugeicons/react-native';
 import * as Haptics from 'expo-haptics';
 import { Link } from 'expo-router';
 import { useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  TextInput,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -27,11 +19,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
-import { Colors } from '@/constants/theme';
 import { cn } from '@/lib/utils';
 import { signUp } from '@/queries/auth';
-
-const MUTED = '#8a8a90';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState('');
@@ -43,9 +33,9 @@ export default function SignUpScreen() {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const passwordRef = useRef<TextInput>(null);
-  const scheme = useColorScheme();
-  const iconColor = scheme === 'dark' ? Colors.dark.text : Colors.light.text;
-  const dangerColor = scheme === 'dark' ? '#f87171' : '#ef4444';
+  const colors = useThemeColors();
+  const iconColor = colors.text;
+  const dangerColor = colors.destructive;
 
   function fieldClassName(field: 'email' | 'password') {
     return cn(
@@ -102,7 +92,7 @@ export default function SignUpScreen() {
             className="max-w-[320px] gap-3">
             <Text
               variant="h3"
-              className="border-0 pb-0 text-center text-[26px] leading-[34px]"
+              className="text-center text-[26px] leading-[34px]"
               style={Platform.select({ ios: { letterSpacing: -0.4 } })}>
               Check your email
             </Text>
@@ -121,11 +111,11 @@ export default function SignUpScreen() {
     <SafeAreaView className="bg-background flex-1">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1 justify-center gap-9 px-6">
+        className="flex-1 gap-9 px-6 pt-14">
         <Animated.View entering={FadeInDown.duration(420)} className="gap-2">
           <Text
             variant="h2"
-            className="border-0 pb-0 text-left text-[32px] leading-[38px]"
+            className="text-left text-[32px] leading-[38px]"
             style={Platform.select({ ios: { letterSpacing: -0.6 } })}>
             Create an account
           </Text>
@@ -163,7 +153,7 @@ export default function SignUpScreen() {
                   icon={Mail01Icon}
                   size={20}
                   strokeWidth={1.6}
-                  color={focused === 'email' ? iconColor : MUTED}
+                  color={focused === 'email' ? iconColor : colors.mutedForeground}
                 />
               </View>
             </View>
@@ -199,7 +189,7 @@ export default function SignUpScreen() {
                   icon={LockPasswordIcon}
                   size={20}
                   strokeWidth={1.6}
-                  color={focused === 'password' ? iconColor : MUTED}
+                  color={focused === 'password' ? iconColor : colors.mutedForeground}
                 />
               </View>
               <Pressable
@@ -215,7 +205,7 @@ export default function SignUpScreen() {
                   icon={passwordVisible ? ViewOffSlashIcon : ViewIcon}
                   size={20}
                   strokeWidth={1.6}
-                  color={MUTED}
+                  color={colors.mutedForeground}
                 />
               </Pressable>
             </View>
@@ -225,7 +215,7 @@ export default function SignUpScreen() {
                 icon={CheckmarkCircle02Icon}
                 size={14}
                 strokeWidth={passwordLongEnough ? 2.2 : 1.6}
-                color={passwordLongEnough ? iconColor : MUTED}
+                color={passwordLongEnough ? iconColor : colors.mutedForeground}
               />
               <Text
                 className={cn(
@@ -262,7 +252,7 @@ export default function SignUpScreen() {
             {loading ? (
               <ActivityIndicator
                 size="small"
-                color={scheme === 'dark' ? Colors.light.text : Colors.dark.text}
+                color={colors.primaryForeground}
               />
             ) : null}
             <Text className="text-base font-semibold">

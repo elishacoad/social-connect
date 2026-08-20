@@ -10,25 +10,16 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import * as Haptics from 'expo-haptics';
 import { useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  TextInput,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
-import { Colors } from '@/constants/theme';
 import { cn } from '@/lib/utils';
 import { signIn, resetPasswordForEmail } from '@/queries/auth';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 type Field = 'email' | 'password';
 
@@ -42,10 +33,10 @@ export default function SignInScreen() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const passwordRef = useRef<TextInput>(null);
 
-  const scheme = useColorScheme();
-  const mutedColor = '#8a8a90';
-  const iconColor = scheme === 'dark' ? Colors.dark.text : Colors.light.text;
-  const dangerColor = scheme === 'dark' ? '#f87171' : '#ef4444';
+  const colors = useThemeColors();
+  const mutedColor = colors.mutedForeground;
+  const iconColor = colors.text;
+  const dangerColor = colors.destructive;
 
   const canSubmit = Boolean(email && password) && !loading;
 
@@ -82,7 +73,7 @@ export default function SignInScreen() {
 
   function fieldClassName(field: Field) {
     return cn(
-      'h-12 rounded-xl pl-11 pr-4 text-base',
+      'h-14 rounded-2xl pl-12 pr-4 text-base',
       error ? 'border-destructive' : focused === field ? 'border-foreground' : 'border-input'
     );
   }
@@ -99,7 +90,7 @@ export default function SignInScreen() {
           keyboardDismissMode="interactive"
           showsVerticalScrollIndicator={false}>
           <View className="gap-2">
-            <Text variant="h2" className="border-0 pb-0 text-left text-4xl">
+            <Text variant="h2" className="text-left text-4xl">
               Welcome back
             </Text>
             <Text variant="muted" className="text-base">
@@ -113,7 +104,7 @@ export default function SignInScreen() {
                 Email
               </Label>
               <View className="relative justify-center">
-                <View pointerEvents="none" className="absolute left-3.5 z-10">
+                <View pointerEvents="none" className="absolute left-4 z-10">
                   <HugeiconsIcon
                     icon={Mail01Icon}
                     size={18}
@@ -147,7 +138,7 @@ export default function SignInScreen() {
                 Password
               </Label>
               <View className="relative justify-center">
-                <View pointerEvents="none" className="absolute left-3.5 z-10">
+                <View pointerEvents="none" className="absolute left-4 z-10">
                   <HugeiconsIcon
                     icon={LockPasswordIcon}
                     size={18}
@@ -180,7 +171,7 @@ export default function SignInScreen() {
                   hitSlop={8}
                   accessibilityRole="button"
                   accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
-                  className="absolute right-1 size-10 items-center justify-center rounded-lg active:bg-muted">
+                  className="absolute right-1 size-12 items-center justify-center rounded-xl active:bg-muted">
                   <HugeiconsIcon
                     icon={passwordVisible ? ViewOffSlashIcon : ViewIcon}
                     size={18}
@@ -234,16 +225,11 @@ export default function SignInScreen() {
             <Button
               onPress={handleSignIn}
               disabled={!canSubmit}
-              className={cn(
-                'h-12 rounded-xl active:opacity-90',
-                !canSubmit && 'bg-muted opacity-100'
-              )}>
+              className="h-14 rounded-2xl">
               {loading ? (
                 <ActivityIndicator size="small" color={mutedColor} />
               ) : (
-                <Text className={cn('text-base font-medium', !canSubmit && 'text-muted-foreground')}>
-                  Sign in
-                </Text>
+                <Text className="text-base font-semibold">Sign in</Text>
               )}
             </Button>
           </View>

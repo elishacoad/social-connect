@@ -10,7 +10,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Linking, Pressable, StyleSheet, useColorScheme, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import Animated, {
   Easing,
@@ -27,14 +27,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
-import { Colors } from '@/constants/theme';
 import { useConnectSession } from '@/hooks/use-connect-session';
 import { cancelConnectSession, matchConnectSession } from '@/queries/connect-sessions';
 import { useConnectStore } from '@/stores/connect-store';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 const QR_SIZE = 208;
 
 export default function ConnectScreen() {
+  const colors = useThemeColors();
   const { friendId } = useLocalSearchParams<{ friendId?: string }>();
   const [permission, requestPermission] = useCameraPermissions();
   const { status, sessionId, token } = useConnectSession();
@@ -90,7 +91,7 @@ export default function ConnectScreen() {
           <Animated.View
             entering={FadeIn.duration(240)}
             className="size-24 items-center justify-center rounded-full bg-muted">
-            <HugeiconsIcon icon={QrCodeIcon} size={38} color="#8a8a90" strokeWidth={1.5} />
+            <HugeiconsIcon icon={QrCodeIcon} size={38} color={colors.mutedForeground} strokeWidth={1.5} />
           </Animated.View>
           <Animated.View entering={FadeInDown.duration(280).delay(80)} className="gap-2">
             <Text variant="h3" className="text-center">
@@ -168,7 +169,7 @@ export default function ConnectScreen() {
         <ModalHeader onClose={handleCancel} />
         <View className="flex-1 items-center justify-center gap-6 px-8 pb-16">
           <View className="size-24 items-center justify-center rounded-full bg-muted">
-            <HugeiconsIcon icon={Alert02Icon} size={38} color="#8a8a90" strokeWidth={1.5} />
+            <HugeiconsIcon icon={Alert02Icon} size={38} color={colors.mutedForeground} strokeWidth={1.5} />
           </View>
           <View className="gap-2">
             <Text variant="h3" className="text-center">
@@ -247,8 +248,7 @@ export default function ConnectScreen() {
 }
 
 function ModalHeader({ onClose, light }: { onClose: () => void; light?: boolean }) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+  const colors = useThemeColors();
 
   return (
     <View className="h-12 flex-row items-center justify-end px-3">

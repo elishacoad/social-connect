@@ -2,18 +2,19 @@ import { ArrowDown01Icon, ArrowRight01Icon, ArrowUp01Icon, UserAdd01Icon, UserGr
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, Pressable, useColorScheme, View } from 'react-native';
+import { FlatList, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ProfileAvatarHeader } from '@/components/profile-avatar-header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
-import { Colors } from '@/constants/theme';
 import { Friendship, useFriends } from '@/hooks/use-friends';
 import { freshnessRatio } from '@/utils/fade';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 function FriendRow({ friendship, drifted = false }: { friendship: Friendship; drifted?: boolean }) {
+  const colors = useThemeColors();
   const friend = friendship.friend;
   if (!friend) return null;
 
@@ -43,7 +44,7 @@ function FriendRow({ friendship, drifted = false }: { friendship: Friendship; dr
         <Text className="flex-1 font-semibold" numberOfLines={1} style={{ opacity: presence }}>
           {friend.display_name}
         </Text>
-        <HugeiconsIcon icon={ArrowRight01Icon} size={18} color="#a1a1aa" strokeWidth={2} />
+        <HugeiconsIcon icon={ArrowRight01Icon} size={18} color={colors.mutedForeground} strokeWidth={2} />
       </Pressable>
     </Link>
   );
@@ -65,13 +66,12 @@ function FriendRowSkeleton({ opacity }: { opacity: number }) {
 }
 
 function EmptyFriends() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+  const colors = useThemeColors();
 
   return (
     <View className="flex-1 items-center justify-center gap-4 px-4 pb-24">
       <View className="size-20 items-center justify-center rounded-full bg-muted">
-        <HugeiconsIcon icon={UserGroupIcon} size={34} color="#8a8a90" strokeWidth={1.5} />
+        <HugeiconsIcon icon={UserGroupIcon} size={34} color={colors.mutedForeground} strokeWidth={1.5} />
       </View>
       <Text variant="h3" className="text-center">
         Nobody here yet
@@ -98,6 +98,8 @@ function DriftedSection({
   expanded: boolean;
   onToggle: () => void;
 }) {
+  const colors = useThemeColors();
+
   return (
     <View className="pt-4">
       <View className="mb-1 h-px bg-border/70" />
@@ -115,7 +117,7 @@ function DriftedSection({
         <HugeiconsIcon
           icon={expanded ? ArrowUp01Icon : ArrowDown01Icon}
           size={18}
-          color="#a1a1aa"
+          color={colors.mutedForeground}
           strokeWidth={2}
         />
       </Pressable>
@@ -138,8 +140,7 @@ function DriftedSection({
 }
 
 export default function FriendsScreen() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+  const colors = useThemeColors();
   const { friendships, faded, loading } = useFriends();
   const [showDrifted, setShowDrifted] = useState(false);
 
@@ -148,7 +149,7 @@ export default function FriendsScreen() {
       <View className="flex-row items-center justify-between px-6 pb-3 pt-3">
         <View className="flex-row items-center gap-3">
           <ProfileAvatarHeader />
-          <Text variant="h2" className="border-0 pb-0 text-left">
+          <Text variant="h2" className="text-left">
             Friends
           </Text>
         </View>

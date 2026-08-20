@@ -5,6 +5,7 @@ import { Pressable, View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 // Column flex, not an absolutely-positioned overlay: the nav pill sits in
 // normal document flow above TabSlot, which fills the rest as `flex-1`.
@@ -37,12 +38,14 @@ export function TabButton({
   isFocused,
   ...props
 }: TabTriggerSlotProps & { icon: IconSvgElement }) {
+  const colors = useThemeColors();
+
   return (
     <Pressable {...props} className="active:opacity-70">
       <View className={cn('rounded-xl p-2', isFocused ? 'bg-accent' : 'bg-transparent')}>
         <HugeiconsIcon
           icon={icon}
-          color={isFocused ? '#111111' : '#8a8a90'}
+          color={isFocused ? colors.text : colors.mutedForeground}
           strokeWidth={isFocused ? 2.5 : 1.5}
           size={22}
         />

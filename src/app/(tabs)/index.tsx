@@ -11,6 +11,7 @@ import { ProfileAvatarHeader } from '@/components/profile-avatar-header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import { useAuth } from '@/hooks/use-auth';
 import { FeedMoment, useFeed } from '@/hooks/use-feed';
 import { useFriends } from '@/hooks/use-friends';
@@ -20,6 +21,7 @@ import { freshnessRatio } from '@/utils/fade';
 import { formatRelativeLabel } from '@/utils/format-relative';
 
 function MomentCard({ moment, ratio, isOwn }: { moment: FeedMoment; ratio: number; isOwn: boolean }) {
+  const colors = useThemeColors();
   const [url, setUrl] = useState<string | null>(null);
   const replyCount = moment.moment_replies?.[0]?.count ?? 0;
 
@@ -112,7 +114,7 @@ function MomentCard({ moment, ratio, isOwn }: { moment: FeedMoment; ratio: numbe
             ) : null}
             {replyCount > 0 ? (
               <View className="flex-row items-center gap-1.5">
-                <HugeiconsIcon icon={BubbleChatIcon} color="#8a8a90" size={14} strokeWidth={2} />
+                <HugeiconsIcon icon={BubbleChatIcon} color={colors.mutedForeground} size={14} strokeWidth={2} />
                 <Text variant="muted" className="text-xs" style={{ fontVariant: ['tabular-nums'] }}>
                   {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
                 </Text>
@@ -173,10 +175,11 @@ function SkeletonFeed() {
 }
 
 function EmptyFeed() {
+  const colors = useThemeColors();
   return (
     <View className="flex-1 items-center justify-center gap-3 px-4 pb-16">
       <View className="mb-1 size-16 items-center justify-center rounded-full bg-muted">
-        <HugeiconsIcon icon={Camera01Icon} color="#8a8a90" size={28} strokeWidth={1.5} />
+        <HugeiconsIcon icon={Camera01Icon} color={colors.mutedForeground} size={28} strokeWidth={1.5} />
       </View>
       <Text variant="h3" className="text-center">
         No moments yet
@@ -222,7 +225,7 @@ export default function TimelineScreen() {
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center gap-3 px-6 pb-3 pt-3">
         <ProfileAvatarHeader />
-        <Text variant="h2" className="border-0 pb-0 text-left text-[28px] tracking-tight">
+        <Text variant="h2" className="text-left text-[28px] tracking-tight">
           Timeline
         </Text>
       </View>

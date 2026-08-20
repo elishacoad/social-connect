@@ -24,10 +24,12 @@ import { ProfileAvatarHeader } from '@/components/profile-avatar-header';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 const SHUTTER_SPRING = { damping: 20, stiffness: 400, mass: 0.6 };
 
 export default function CameraScreen() {
+  const colors = useThemeColors();
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
@@ -49,7 +51,7 @@ export default function CameraScreen() {
         <View className="flex-1 items-center justify-center gap-3 px-6 pb-20">
           <View className="bg-muted/40 mb-2 size-28 items-center justify-center rounded-full">
             <View className="bg-muted size-20 items-center justify-center rounded-full">
-              <HugeiconsIcon icon={Camera01Icon} color="#8a8a90" size={32} strokeWidth={1.25} />
+              <HugeiconsIcon icon={Camera01Icon} color={colors.mutedForeground} size={32} strokeWidth={1.25} />
             </View>
           </View>
           <Text variant="h3" className="text-center">

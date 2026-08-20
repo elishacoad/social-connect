@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
+import { AlertCircleIcon, ArrowLeft02Icon, Camera01Icon } from '@hugeicons/core-free-icons';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
 import { refreshProfile, useAuth } from '@/hooks/use-auth';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import { uploadAvatar } from '@/lib/supabase-storage';
 import { cn } from '@/lib/utils';
 import { isUsernameAvailable, updateProfile } from '@/queries/profiles';
@@ -95,6 +96,8 @@ export default function OnboardingScreen() {
     }
   }
 
+  const colors = useThemeColors();
+
   return (
     <SafeAreaView className="flex-1 bg-background">
       <KeyboardAvoidingView
@@ -102,8 +105,8 @@ export default function OnboardingScreen() {
         className="flex-1 px-6">
         <View className="flex-row items-center gap-4 pt-2">
           {stepIndex > 0 ? (
-            <Pressable onPress={goBack} hitSlop={12}>
-              <HugeiconsIcon icon={ArrowLeft02Icon} size={22} />
+            <Pressable onPress={goBack} hitSlop={12} accessibilityRole="button" accessibilityLabel="Back">
+              <HugeiconsIcon icon={ArrowLeft02Icon} size={22} color={colors.text} strokeWidth={2} />
             </Pressable>
           ) : (
             <View className="size-[22px]" />
@@ -122,26 +125,43 @@ export default function OnboardingScreen() {
           {step === 'photo' && (
             <View className="gap-6">
               <View className="gap-1">
-                <Text variant="h2" className="border-0 pb-0 text-left">
+                <Text variant="h2" className="text-left">
                   Add a photo
                 </Text>
                 <Text variant="muted">So friends recognize you at a glance. You can skip this for now.</Text>
               </View>
 
-              <Pressable onPress={handlePickAvatar} className="self-center">
-                <Avatar alt="Your profile picture" className="size-28">
+              <Pressable
+                onPress={handlePickAvatar}
+                accessibilityRole="button"
+                accessibilityLabel={avatarUri ? 'Change profile photo' : 'Add a profile photo'}
+                className="self-center active:opacity-70">
+                <Avatar alt="Your profile picture" className="size-32">
                   {avatarUri ? (
                     <AvatarImage source={{ uri: avatarUri }} />
                   ) : (
                     <AvatarFallback>
-                      <Text variant="muted">Add photo</Text>
+                      <HugeiconsIcon
+                        icon={Camera01Icon}
+                        size={30}
+                        color={colors.mutedForeground}
+                        strokeWidth={1.5}
+                      />
                     </AvatarFallback>
                   )}
                 </Avatar>
+                <View className="bg-primary absolute bottom-0 right-0 size-9 items-center justify-center rounded-full">
+                  <HugeiconsIcon
+                    icon={Camera01Icon}
+                    size={17}
+                    color={colors.primaryForeground}
+                    strokeWidth={2}
+                  />
+                </View>
               </Pressable>
 
-              <Button onPress={goNext}>
-                <Text>{avatarUri ? 'Continue' : 'Skip for now'}</Text>
+              <Button onPress={goNext} className="h-14 rounded-2xl">
+                <Text className="text-base font-semibold">{avatarUri ? 'Continue' : 'Skip for now'}</Text>
               </Button>
             </View>
           )}
@@ -149,7 +169,7 @@ export default function OnboardingScreen() {
           {step === 'name' && (
             <View className="gap-6">
               <View className="gap-1">
-                <Text variant="h2" className="border-0 pb-0 text-left">
+                <Text variant="h2" className="text-left">
                   What&apos;s your name?
                 </Text>
                 <Text variant="muted">This is how friends will see you.</Text>
@@ -161,6 +181,7 @@ export default function OnboardingScreen() {
                   aria-labelledby="display_name"
                   value={displayName}
                   onChangeText={setDisplayName}
+                  className="h-14 rounded-2xl px-4 text-base"
                   placeholder="Your name"
                   autoFocus
                   returnKeyType="next"
@@ -168,10 +189,17 @@ export default function OnboardingScreen() {
                 />
               </View>
 
-              {error ? <Text className="text-destructive text-sm">{error}</Text> : null}
+              {error ? (
+                <View className="bg-destructive/10 flex-row items-start gap-2 rounded-xl px-3 py-2.5">
+                  <View className="pt-px">
+                    <HugeiconsIcon icon={AlertCircleIcon} size={16} color={colors.destructive} strokeWidth={2} />
+                  </View>
+                  <Text className="text-destructive flex-1 text-sm leading-5">{error}</Text>
+                </View>
+              ) : null}
 
-              <Button onPress={goNext} disabled={!displayName.trim()}>
-                <Text>Continue</Text>
+              <Button onPress={goNext} disabled={!displayName.trim()} className="h-14 rounded-2xl">
+                <Text className="text-base font-semibold">Continue</Text>
               </Button>
             </View>
           )}
@@ -179,7 +207,7 @@ export default function OnboardingScreen() {
           {step === 'username' && (
             <View className="gap-6">
               <View className="gap-1">
-                <Text variant="h2" className="border-0 pb-0 text-left">
+                <Text variant="h2" className="text-left">
                   Pick a username
                 </Text>
                 <Text variant="muted">Lowercase letters, numbers, and underscores. Others use this to find you.</Text>
@@ -192,6 +220,7 @@ export default function OnboardingScreen() {
                   value={username}
                   onChangeText={setUsername}
                   autoCapitalize="none"
+                  className="h-14 rounded-2xl px-4 text-base"
                   placeholder="lowercase, no spaces"
                   autoFocus
                   returnKeyType="done"
@@ -199,10 +228,17 @@ export default function OnboardingScreen() {
                 />
               </View>
 
-              {error ? <Text className="text-destructive text-sm">{error}</Text> : null}
+              {error ? (
+                <View className="bg-destructive/10 flex-row items-start gap-2 rounded-xl px-3 py-2.5">
+                  <View className="pt-px">
+                    <HugeiconsIcon icon={AlertCircleIcon} size={16} color={colors.destructive} strokeWidth={2} />
+                  </View>
+                  <Text className="text-destructive flex-1 text-sm leading-5">{error}</Text>
+                </View>
+              ) : null}
 
-              <Button onPress={handleFinish} disabled={loading || !username.trim()}>
-                <Text>{loading ? 'Saving…' : 'Finish'}</Text>
+              <Button onPress={handleFinish} disabled={loading || !username.trim()} className="h-14 rounded-2xl">
+                <Text className="text-base font-semibold">{loading ? 'Saving…' : 'Finish'}</Text>
               </Button>
             </View>
           )}

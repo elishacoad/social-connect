@@ -17,10 +17,9 @@ import { getMomentMediaUrl } from '@/lib/supabase-storage';
 import { createReply } from '@/queries/moment-replies';
 import { deleteMoment, getMoment, updateMomentCaption } from '@/queries/moments';
 import { formatRelativeLabel } from '@/utils/format-relative';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 type Moment = Awaited<ReturnType<typeof getMoment>>;
-
-const MUTED_ICON = '#8a8a90';
 
 function initialOf(name?: string | null) {
   return name?.charAt(0).toUpperCase() ?? '?';
@@ -87,10 +86,11 @@ function ReplyRow({
 }
 
 function EmptyReplies({ authorName }: { authorName?: string | null }) {
+  const colors = useThemeColors();
   return (
     <View className="items-center gap-3 px-10 py-8">
       <View className="size-14 items-center justify-center rounded-full bg-muted">
-        <HugeiconsIcon icon={BubbleChatIcon} color={MUTED_ICON} size={24} strokeWidth={1.5} />
+        <HugeiconsIcon icon={BubbleChatIcon} color={colors.mutedForeground} size={24} strokeWidth={1.5} />
       </View>
       <View className="gap-1">
         <Text className="text-center text-sm font-medium">No replies yet</Text>
@@ -113,6 +113,7 @@ function MomentSkeleton() {
 }
 
 export default function MomentDetailScreen() {
+  const colors = useThemeColors();
   const { id, edit } = useLocalSearchParams<{ id: string; edit?: string }>();
   const { session } = useAuth();
   const [moment, setMoment] = useState<Moment | null>(null);
@@ -264,7 +265,7 @@ export default function MomentDetailScreen() {
                     onPress={() => setEditing(false)}
                     disabled={savingCaption}
                     className="h-10 flex-row items-center gap-1.5 rounded-full border border-border px-4 active:scale-[0.96] active:bg-accent">
-                    <HugeiconsIcon icon={Cancel01Icon} color={MUTED_ICON} size={16} />
+                    <HugeiconsIcon icon={Cancel01Icon} color={colors.mutedForeground} size={16} />
                     <Text className="text-sm font-medium">Cancel</Text>
                   </Pressable>
                   <Pressable
@@ -340,7 +341,7 @@ export default function MomentDetailScreen() {
             ) : (
               <HugeiconsIcon
                 icon={SentIcon}
-                color={canSend ? 'white' : MUTED_ICON}
+                color={canSend ? 'white' : colors.mutedForeground}
                 size={18}
                 strokeWidth={2.5}
               />

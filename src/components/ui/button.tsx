@@ -5,7 +5,7 @@ import { Platform, Pressable } from 'react-native';
 
 const buttonVariants = cva(
   cn(
-    'group shrink-0 flex-row items-center justify-center gap-2 rounded-md shadow-none',
+    'group shrink-0 flex-row items-center justify-center gap-2 rounded-md shadow-none active:scale-[0.97]',
     Platform.select({
       web: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
     })
@@ -90,11 +90,23 @@ const buttonTextVariants = cva(
 
 type ButtonProps = React.ComponentProps<typeof Pressable> & React.RefAttributes<typeof Pressable> & VariantProps<typeof buttonVariants>;
 
+// Variants that paint a fill read as broken when merely dimmed, so a disabled
+// one swaps to the muted surface instead; outline/ghost/link keep the dim.
+const FILLED_VARIANTS = ['default', 'destructive', 'secondary'];
+
 function Button({ className, variant, size, ...props }: ButtonProps) {
+  const disabled = Boolean(props.disabled);
+  const filled = FILLED_VARIANTS.includes(variant ?? 'default');
+
   return (
-    <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
+    <TextClassContext.Provider
+      value={cn(buttonTextVariants({ variant, size }), disabled && 'text-muted-foreground')}>
       <Pressable
-        className={cn(props.disabled && 'opacity-50', buttonVariants({ variant, size }), className)}
+        className={cn(
+          buttonVariants({ variant, size }),
+          disabled && (filled ? 'bg-muted shadow-none active:scale-100' : 'opacity-50'),
+          className
+        )}
         role="button"
         {...props}
       />

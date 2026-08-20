@@ -16,6 +16,7 @@ import Animated, {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 import { useAuth } from '@/hooks/use-auth';
 import { getMomentMediaUrl } from '@/lib/supabase-storage';
 import { signOut } from '@/queries/auth';
@@ -26,7 +27,6 @@ import { freshnessRatio } from '@/utils/fade';
 
 type MomentThumbnail = { id: string; url: string };
 
-const MUTED = '#8a8a90';
 const IMAGE_OUTLINE = 'border border-black/10 dark:border-white/10';
 
 function useMomentThumbnails(authorId: string | undefined) {
@@ -67,9 +67,10 @@ function chunkIntoRows<T>(items: T[], perRow: number) {
 }
 
 function EmptyMoments({ isMe }: { isMe: boolean }) {
+  const colors = useThemeColors();
   return (
     <View className="mt-4 w-full items-center gap-3 rounded-2xl border border-dashed border-border px-6 py-10">
-      <HugeiconsIcon icon={Image02Icon} color={MUTED} size={26} strokeWidth={1.5} />
+      <HugeiconsIcon icon={Image02Icon} color={colors.mutedForeground} size={26} strokeWidth={1.5} />
       <Text variant="muted" className="text-center leading-5">
         {isMe
           ? 'Your moments will collect here.\nCapture one and it stays.'
@@ -123,6 +124,7 @@ function MomentsGrid({
 }
 
 function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }) {
+  const colors = useThemeColors();
   const thumbnails = useMomentThumbnails(profile.id);
   const [ratio, setRatio] = useState(1);
   const scheme = useColorScheme();
@@ -183,7 +185,7 @@ function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }
         </Text>
         {!isMe && (
           <View className="flex-row items-center gap-1.5">
-            <HugeiconsIcon icon={SunsetIcon} color={MUTED} size={15} strokeWidth={1 + ratio} />
+            <HugeiconsIcon icon={SunsetIcon} color={colors.mutedForeground} size={15} strokeWidth={1 + ratio} />
             <Text variant="muted" className="text-xs">
               {driftLabel(ratio)}
             </Text>
@@ -198,7 +200,7 @@ function ProfileHeader({ profile, isMe }: { profile: ProfileRow; isMe: boolean }
           variant="ghost"
           onPress={() => signOut()}
           className="mt-10 h-11 self-center rounded-2xl px-5 active:scale-[0.96]">
-          <HugeiconsIcon icon={Logout03Icon} color={MUTED} size={18} strokeWidth={1.5} />
+          <HugeiconsIcon icon={Logout03Icon} color={colors.mutedForeground} size={18} strokeWidth={1.5} />
           <Text className="text-muted-foreground">Sign out</Text>
         </Button>
       )}

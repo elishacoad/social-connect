@@ -5,10 +5,12 @@ import { Modal, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Text } from '@/components/ui/text';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 // Own-post overflow menu, shared between the feed card and the moment
 // detail screen so "edit caption" / "delete" only exist in one place.
 export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+  const colors = useThemeColors();
   const [open, setOpen] = useState(false);
 
   return (
@@ -17,7 +19,7 @@ export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; on
         hitSlop={10}
         onPress={() => setOpen(true)}
         className="size-8 items-center justify-center rounded-full active:bg-accent">
-        <HugeiconsIcon icon={MoreHorizontalIcon} color="#8a8a90" size={22} strokeWidth={2.5} />
+        <HugeiconsIcon icon={MoreHorizontalIcon} color={colors.mutedForeground} size={22} strokeWidth={2.5} />
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
@@ -30,7 +32,7 @@ export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; on
                   onEdit();
                 }}
                 className="flex-row items-center gap-3 rounded-xl px-4 py-3 active:bg-accent">
-                <HugeiconsIcon icon={PencilEdit02Icon} color="#8a8a90" size={20} />
+                <HugeiconsIcon icon={PencilEdit02Icon} color={colors.mutedForeground} size={20} />
                 <Text className="text-base">Edit caption</Text>
               </Pressable>
               <View className="h-px bg-border" />
@@ -40,7 +42,7 @@ export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; on
                   onDelete();
                 }}
                 className="flex-row items-center gap-3 rounded-xl px-4 py-3 active:bg-accent">
-                <HugeiconsIcon icon={Delete02Icon} color="#ef4444" size={20} />
+                <HugeiconsIcon icon={Delete02Icon} color={colors.destructive} size={20} />
                 <Text className="text-base text-red-500">Delete moment</Text>
               </Pressable>
             </Pressable>
