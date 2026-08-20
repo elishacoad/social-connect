@@ -13,7 +13,7 @@ Expo HAS CHANGED. Read the exact versioned docs at https://docs.expo.dev/version
 - NativeWind (Tailwind CSS styling)
 - React Native Reusables (shadcn/ui for RN, copy-paste components built on NativeWind)
 - Zustand (lightweight local state)
-- Phosphor (`phosphor-react-native`) for icons — no emoji or Unicode glyphs as UI icons, ever
+- Hugeicons (`@hugeicons/react-native` + `@hugeicons/core-free-icons`) for icons — no emoji or Unicode glyphs as UI icons, ever. The free set is stroke-only: vary `strokeWidth`, not a `weight` prop. SVG icons cannot be used in the native tab bar, which uses SF Symbols instead
 
 ### Backend
 

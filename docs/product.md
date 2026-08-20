@@ -52,9 +52,21 @@ Front camera makes the interaction social and human. Users see each other, make 
 
 Both people must intentionally participate. No passive location tracking. No automatic nearby detection. Connection requires shared action and consent.
 
-### New Connection vs. Reconnection (Open Question)
+(This "no passive tracking" principle applies to new connections. Reconnecting with an existing friend now works differently — see Reconnection Method below.)
 
-New connections and reconnections are different moments emotionally, and may need different UIs. A first connection is momentous and rare — the full QR ritual fits. But reconnecting with someone you already know may want something lighter: holding down a button when nearby, a simplified version of the connect flow, or something else entirely. The reconnection UX is unresolved. See open question #10.
+### Reconnection Method (Location-Based)
+
+New connections always use the mutual QR ritual above. Reconnecting with someone you're already friends with works differently:
+
+1. The app detects when you're near an existing friend (background location/proximity)
+2. You get a notification, but there's no pressure to act on it right away
+3. The app holds onto the "you were near this friend" knowledge for the rest of the day, so you can take the reconnect action whenever it's convenient — not necessarily in the moment
+4. Reconnecting itself is still a manual, intentional action; proximity detection only surfaces the opportunity, it doesn't refresh the relationship automatically
+5. There's a cooldown: a reconnect only refreshes the relationship if it's been at least one month since you last reconnected with that friend. Reconnecting again sooner has no benefit, and you won't get a proximity notification for a friend you've already reconnected with that month
+6. Reconnecting more than once in the same day does nothing extra
+7. Reconnecting again after the one-month cooldown may unlock a small optional bonus later — not required, not yet designed
+
+This replaces the "share one technical flow" MVP default from `decisions.md` (2026-07-16) — new connections and reconnections now use genuinely different mechanisms, not just different copy on the same flow. Resolves open question #10 with a new direction; see `decisions.md` (2026-07-23).
 
 ## Friend Drift / Fade System
 
@@ -170,7 +182,8 @@ Annual reflective recap of relationships, moments, reconnections, memories. Nost
 ### Must Have
 
 - Auth + profiles
-- Mutual QR connect / reconnect flow
+- Mutual QR connect flow (new connections)
+- Location-based reconnect detection + notification, with manual reconnect action and a one-month cooldown (existing friends)
 - Moment capture and posting (in-app camera, no filters)
 - Chronological feed
 - Fading / drift visuals
@@ -183,17 +196,17 @@ Annual reflective recap of relationships, moments, reconnections, memories. Nost
 - Advanced profiles
 - Complex messaging
 - AI features
-- Location systems
+- Location systems beyond proximity-based reconnect detection (see Reconnection Method above)
 - Recommendation systems
 - Deep customization
-- Push notifications (add later)
+- Push notifications, except the proximity reconnect alert above (general push add later)
 - Long-distance reconnection systems
 
 ---
 
 ## Open Questions
 
-1. **Bump/reconnect technology** - QR is the current direction, but NFC, Bluetooth, Apple NameDrop-like behavior, or hybrid fallback could work. Needs cross-platform support, low friction, intentionality.
+1. ~~**Bump/reconnect technology**~~ - Reconnect now has a new direction: background location/proximity detection + notification, with the actual reconnect action taken manually (possibly deferred to later in the day) and a one-month cooldown per friend. QR remains for new connections only. See `decisions.md` (2026-07-23). Still open: which iOS/Android APIs (geofencing vs. significant-location-change), battery impact, and how long the "was nearby" state should be held before it expires.
 
 2. **Long-distance friendships** - How to handle friends who can't meet physically? Need balance between rewarding physical presence and not punishing distance/adult life. May need medium-strength digital interaction refreshes.
 
@@ -211,7 +224,7 @@ Annual reflective recap of relationships, moments, reconnections, memories. Nost
 
 9. **Media type** - Picture only? Short video? Live Photo? What formats are allowed for moments? Video adds richness but increases friction, storage, and production pressure.
 
-10. ~~**Reconnection UX**~~ - Resolved with an MVP default — see `decisions.md`. Still open: whether the lighter reconnect entry point feels different enough in practice.
+10. ~~**Reconnection UX**~~ - Resolved: reconnection uses location-based proximity detection + a deferrable notification instead of the shared QR flow — see `decisions.md` (2026-07-23), supersedes the 2026-07-16 "one technical flow" default. Still open: exact cooldown-expiry copy, and whether the optional post-cooldown bonus is worth building.
 
 11. **Voice notes** - Are voice notes supported as a reply type or standalone interaction? They add warmth and intimacy but increase complexity and could push the app toward becoming a messaging platform.
 

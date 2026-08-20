@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
-import { ArrowLeft } from 'phosphor-react-native';
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -102,7 +103,7 @@ export default function OnboardingScreen() {
         <View className="flex-row items-center gap-4 pt-2">
           {stepIndex > 0 ? (
             <Pressable onPress={goBack} hitSlop={12}>
-              <ArrowLeft size={22} />
+              <HugeiconsIcon icon={ArrowLeft02Icon} size={22} />
             </Pressable>
           ) : (
             <View className="size-[22px]" />

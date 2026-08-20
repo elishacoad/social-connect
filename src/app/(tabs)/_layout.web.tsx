@@ -1,5 +1,6 @@
 import { Tabs, TabList, TabTrigger, TabSlot, TabTriggerSlotProps, TabListProps } from 'expo-router/ui';
-import { CameraIcon, StackIcon, UsersIcon, type Icon } from 'phosphor-react-native';
+import { Camera01Icon, Layers01Icon, UserMultipleIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import { Pressable, View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
@@ -16,13 +17,13 @@ export default function AppTabs() {
       <TabList asChild>
         <CustomTabList>
           <TabTrigger name="index" href="/" asChild>
-            <TabButton icon={StackIcon} />
+            <TabButton icon={Layers01Icon} />
           </TabTrigger>
           <TabTrigger name="camera" href="/camera" asChild>
-            <TabButton icon={CameraIcon} />
+            <TabButton icon={Camera01Icon} />
           </TabTrigger>
           <TabTrigger name="friends" href="/friends" asChild>
-            <TabButton icon={UsersIcon} />
+            <TabButton icon={UserMultipleIcon} />
           </TabTrigger>
         </CustomTabList>
       </TabList>
@@ -32,16 +33,17 @@ export default function AppTabs() {
 }
 
 export function TabButton({
-  icon: IconComponent,
+  icon,
   isFocused,
   ...props
-}: TabTriggerSlotProps & { icon: Icon }) {
+}: TabTriggerSlotProps & { icon: IconSvgElement }) {
   return (
     <Pressable {...props} className="active:opacity-70">
       <View className={cn('rounded-xl p-2', isFocused ? 'bg-accent' : 'bg-transparent')}>
-        <IconComponent
+        <HugeiconsIcon
+          icon={icon}
           color={isFocused ? '#111111' : '#8a8a90'}
-          weight={isFocused ? 'fill' : 'regular'}
+          strokeWidth={isFocused ? 2.5 : 1.5}
           size={22}
         />
       </View>

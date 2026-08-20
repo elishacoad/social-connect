@@ -37,8 +37,24 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="connect" options={{ presentation: 'modal' }} />
             <Stack.Screen name="moment-caption" />
-            <Stack.Screen name="profile/[id]" options={{ headerShown: true, title: '' }} />
-            <Stack.Screen name="moment/[id]" options={{ headerShown: true, title: '' }} />
+            <Stack.Screen
+              name="profile/[id]"
+              options={{
+                headerShown: true,
+                title: '',
+                headerBackButtonDisplayMode: 'minimal',
+                headerTransparent: true,
+              }}
+            />
+            <Stack.Screen
+              name="moment/[id]"
+              options={{
+                headerShown: true,
+                title: '',
+                headerBackButtonDisplayMode: 'minimal',
+                headerTransparent: true,
+              }}
+            />
           </Stack.Protected>
         </Stack>
       )}

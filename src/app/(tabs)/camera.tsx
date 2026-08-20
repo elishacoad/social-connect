@@ -2,14 +2,30 @@ import { CameraType, CameraView, FlashMode, useCameraPermissions } from 'expo-ca
 import * as Haptics from 'expo-haptics';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { router } from 'expo-router';
-import { CameraRotateIcon, LightningIcon, LightningSlashIcon } from 'phosphor-react-native';
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import {
+  Camera01Icon,
+  CameraRotated01Icon,
+  FlashIcon,
+  FlashOffIcon,
+} from '@hugeicons/core-free-icons';
 import { useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ProfileAvatarHeader } from '@/components/profile-avatar-header';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
+import { cn } from '@/lib/utils';
+
+const SHUTTER_SPRING = { damping: 20, stiffness: 400, mass: 0.6 };
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -17,6 +33,11 @@ export default function CameraScreen() {
   const [flash, setFlash] = useState<FlashMode>('off');
   const [capturing, setCapturing] = useState(false);
   const cameraRef = useRef<CameraView>(null);
+  const shutterScale = useSharedValue(1);
+
+  const shutterStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: shutterScale.get() }],
+  }));
 
   if (!permission) {
     return <View className="flex-1 bg-background" />;
@@ -24,17 +45,27 @@ export default function CameraScreen() {
 
   if (!permission.granted) {
     return (
-      <View className="flex-1 items-center justify-center gap-3 bg-background px-6">
-        <Text variant="h3" className="text-center">
-          Camera access needed
-        </Text>
-        <Text variant="muted" className="text-center">
-          Social Connect uses your camera to capture moments and connect with friends in person.
-        </Text>
-        <Button onPress={requestPermission} className="mt-2">
-          <Text>Allow camera access</Text>
-        </Button>
-      </View>
+      <SafeAreaView className="flex-1 bg-background" edges={['top', 'bottom']}>
+        <View className="flex-1 items-center justify-center gap-3 px-6 pb-20">
+          <View className="bg-muted/40 mb-2 size-28 items-center justify-center rounded-full">
+            <View className="bg-muted size-20 items-center justify-center rounded-full">
+              <HugeiconsIcon icon={Camera01Icon} color="#8a8a90" size={32} strokeWidth={1.25} />
+            </View>
+          </View>
+          <Text variant="h3" className="text-center">
+            Camera access needed
+          </Text>
+          <Text variant="muted" className="max-w-[17rem] text-center leading-relaxed">
+            Social Connect uses your camera to capture moments and connect with friends in person.
+          </Text>
+          <Button size="lg" onPress={requestPermission} className="mt-4 active:scale-[0.96]">
+            <Text>Allow camera access</Text>
+          </Button>
+          <Text variant="muted" className="mt-1 text-center text-xs opacity-70">
+            You can change this later in Settings.
+          </Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -69,6 +100,8 @@ export default function CameraScreen() {
     }
   }
 
+  const flashOn = flash === 'on';
+
   return (
     <View className="flex-1 bg-black">
       <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
@@ -79,31 +112,60 @@ export default function CameraScreen() {
         <View className="items-center px-6 pt-4">
           <View className="aspect-square w-full overflow-hidden rounded-[40px] bg-neutral-900">
             <CameraView ref={cameraRef} style={{ flex: 1 }} facing={facing} flash={flash} />
+            <View className="absolute inset-0 rounded-[40px] border border-white/10" />
+            {capturing ? (
+              <Animated.View
+                entering={FadeIn.duration(80)}
+                exiting={FadeOut.duration(260)}
+                className="absolute inset-0 bg-white"
+              />
+            ) : null}
           </View>
         </View>
 
-        <View className="flex-1 flex-row items-center justify-between px-10">
+        <View className="flex-1 flex-row items-center justify-between px-9 pb-2">
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={flashOn ? 'Turn flash off' : 'Turn flash on'}
             onPress={() => setFlash((current) => (current === 'off' ? 'on' : 'off'))}
-            className="size-12 items-center justify-center rounded-full bg-white/10 active:opacity-70">
-            {flash === 'off' ? (
-              <LightningSlashIcon color="white" size={22} />
-            ) : (
-              <LightningIcon color="white" size={22} weight="fill" />
-            )}
+            className={cn(
+              'size-14 items-center justify-center rounded-full border active:opacity-70',
+              flashOn ? 'border-white bg-white' : 'border-white/10 bg-white/10'
+            )}>
+            <HugeiconsIcon
+              icon={flashOn ? FlashIcon : FlashOffIcon}
+              color={flashOn ? 'black' : 'white'}
+              size={22}
+              strokeWidth={flashOn ? 2.5 : 1.75}
+            />
           </Pressable>
 
-          <Pressable
-            onPress={handleCapture}
-            disabled={capturing}
-            className="size-[76px] items-center justify-center rounded-full border-4 border-white active:opacity-70">
-            <View className="size-[60px] rounded-full bg-white" />
-          </Pressable>
+          <Animated.View style={shutterStyle}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Capture moment"
+              accessibilityState={{ disabled: capturing }}
+              onPress={handleCapture}
+              onPressIn={() => {
+                shutterScale.set(withSpring(0.93, SHUTTER_SPRING));
+              }}
+              onPressOut={() => {
+                shutterScale.set(withSpring(1, SHUTTER_SPRING));
+              }}
+              disabled={capturing}
+              className="size-[78px] items-center justify-center rounded-full border-[3px] border-white/90 shadow-lg shadow-black/40">
+              <View
+                className={cn('size-[62px] rounded-full bg-white', capturing && 'opacity-40')}
+              />
+            </Pressable>
+          </Animated.View>
 
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Flip camera"
             onPress={() => setFacing((current) => (current === 'back' ? 'front' : 'back'))}
-            className="size-12 items-center justify-center rounded-full bg-white/10 active:opacity-70">
-            <CameraRotateIcon color="white" size={22} />
+            className="size-14 items-center justify-center rounded-full border border-white/10 bg-white/10 active:opacity-70">
+            <HugeiconsIcon icon={CameraRotated01Icon} color="white" size={22} strokeWidth={1.75} />
           </Pressable>
         </View>
       </SafeAreaView>

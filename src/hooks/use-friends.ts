@@ -8,10 +8,15 @@ export type Friendship = Awaited<ReturnType<typeof getMyFriendships>>[number];
 export function useFriends() {
   const [all, setAll] = useState<Friendship[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
     return getMyFriendships()
-      .then(setAll)
+      .then((rows) => {
+        setAll(rows);
+        setError(null);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : 'Could not load your friends'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -22,5 +27,5 @@ export function useFriends() {
   const friendships = all.filter((f) => !isFullyFaded(f));
   const faded = all.filter((f) => isFullyFaded(f));
 
-  return { friendships, faded, loading, refresh };
+  return { friendships, faded, loading, error, refresh };
 }

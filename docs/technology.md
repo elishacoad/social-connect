@@ -52,9 +52,11 @@ How two users establish or refresh a friendship in-person.
 - **Cons:** Requires microphone permission (trust barrier). Ambient noise can interfere. Less tested in consumer apps. SDKs exist (LISNR Radius) but niche.
 - **Verdict:** Interesting but unproven for consumer social. Microphone permission is a hard sell.
 
-### Leading Candidates
+### Leading Candidates (New Connection Only)
 
-The two strongest options for our use case are **BLE hold-to-connect** and **mutual QR scan**. No decision yet — could use one for initial connect and another for reconnect, or combine them. Both need prototyping.
+As of the 2026-07-23 decision (see `decisions.md`), reconnecting with an existing friend no longer uses this section's mechanisms — see "Reconnection: Location-Based Proximity" below. BLE and QR remain candidates for the **first-time connection ritual only**.
+
+The two strongest options for that first-time ritual are **BLE hold-to-connect** and **mutual QR scan**. No decision yet. Both need prototyping.
 
 #### BLE Hold-to-Connect
 
@@ -106,11 +108,29 @@ The two strongest options for our use case are **BLE hold-to-connect** and **mut
 
 ### Open Questions
 
-- Which method for first-time connect vs. reconnect? Could use QR for initial connect (more ceremony) and BLE for reconnects (fast, familiar).
 - Should QR serve as fallback for BLE, or should they be independent flows?
 - NFC as a third option on supported devices?
 - What RSSI threshold feels right in practice? Needs real-device testing.
-- Haptic feedback patterns — different for connect vs. reconnect?
+- Haptic feedback pattern for the new-connection ritual
+
+### Reconnection: Location-Based Proximity
+
+Reconnecting with an existing friend uses background proximity detection instead of BLE/QR:
+
+1. Both users' apps monitor location in the background (geofencing or significant-location-change API — TBD, needs battery testing) and compare positions server-side, or exchange proximity via a lighter-weight background check-in
+2. When two friends are detected near each other, each gets a push notification — informational, not a demand for immediate action
+3. The "was near this friend" state is held (server-side, tied to the friendship) for the rest of that day, so either user can open the app later and complete the reconnect manually
+4. Completing the reconnect is a deliberate tap, not automatic — proximity only unlocks the option
+5. Server enforces the cooldown: a reconnect only refreshes relationship freshness if `now - last_reconnected_at >= 1 month` for that friend pair; within the cooldown, no notification fires and a manual reconnect attempt is a no-op
+6. Multiple reconnects on the same day have no additional effect
+
+**Open questions:**
+
+- Exact background location API/permission model per platform (iOS background location + significant-location-change vs. Android geofencing), and battery/privacy tradeoffs
+- How long the "was nearby" state should be held before it expires if unactioned (currently: rest of the day)
+- Whether proximity detection needs a minimum dwell time (to avoid firing for someone briefly passing by) or a distance threshold
+- What the optional post-cooldown bonus (mentioned in `product.md`) would actually be, if built at all
+- Privacy/consent framing for background location — likely needs clear onboarding copy given the "no passive tracking" principle this replaces for reconnects specifically
 
 ### Security (Both Methods)
 

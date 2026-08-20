@@ -8,10 +8,15 @@ export type FeedMoment = Awaited<ReturnType<typeof getFeed>>[number];
 export function useFeed() {
   const [moments, setMoments] = useState<FeedMoment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
     return getFeed()
-      .then(setMoments)
+      .then((rows) => {
+        setMoments(rows);
+        setError(null);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : 'Could not load your timeline'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -30,5 +35,5 @@ export function useFeed() {
     };
   }, [refresh]);
 
-  return { moments, loading, refresh };
+  return { moments, loading, error, refresh };
 }

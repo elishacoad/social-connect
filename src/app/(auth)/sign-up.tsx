@@ -1,13 +1,37 @@
+import {
+  AlertCircleIcon,
+  CheckmarkCircle02Icon,
+  Mail01Icon,
+  MailOpen01Icon,
+  LockPasswordIcon,
+  ViewIcon,
+  ViewOffSlashIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import * as Haptics from 'expo-haptics';
 import { Link } from 'expo-router';
-import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  TextInput,
+  useColorScheme,
+  View,
+} from 'react-native';
+import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
+import { Colors } from '@/constants/theme';
+import { cn } from '@/lib/utils';
 import { signUp } from '@/queries/auth';
+
+const MUTED = '#8a8a90';
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState('');
@@ -15,11 +39,29 @@ export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmationSent, setConfirmationSent] = useState(false);
+  const [focused, setFocused] = useState<'email' | 'password' | null>(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const passwordRef = useRef<TextInput>(null);
+  const scheme = useColorScheme();
+  const iconColor = scheme === 'dark' ? Colors.dark.text : Colors.light.text;
+  const dangerColor = scheme === 'dark' ? '#f87171' : '#ef4444';
+
+  function fieldClassName(field: 'email' | 'password') {
+    return cn(
+      'h-14 rounded-2xl pl-12 pr-4 text-base',
+      error ? 'border-destructive' : focused === field ? 'border-foreground' : 'border-input'
+    );
+  }
+
+  const passwordLongEnough = password.length >= 8;
+  const canSubmit = !loading && Boolean(email) && Boolean(password);
 
   async function handleSignUp() {
     setError(null);
     if (password.length < 8) {
       setError('Password must be at least 8 characters');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       return;
     }
     setLoading(true);
@@ -32,77 +74,211 @@ export default function SignUpScreen() {
       if (!session) setConfirmationSent(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } finally {
       setLoading(false);
     }
   }
 
+  function handleSubmitPress() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    handleSignUp();
+  }
+
   if (confirmationSent) {
     return (
-      <SafeAreaView className="flex-1 bg-background">
-        <View className="flex-1 items-center justify-center gap-2 px-6">
-          <Text variant="h2" className="border-0 pb-0 text-center">
-            Check your email
-          </Text>
-          <Text variant="muted" className="text-center">
-            We sent a confirmation link to {email.trim()}. Tap it to finish creating your account.
-          </Text>
+      <SafeAreaView className="bg-background flex-1">
+        <View className="flex-1 items-center justify-center gap-8 px-8">
+          <Animated.View
+            entering={FadeInDown.duration(420)}
+            className="bg-muted/40 size-32 items-center justify-center rounded-full">
+            <View className="bg-muted size-24 items-center justify-center rounded-full">
+              <HugeiconsIcon icon={MailOpen01Icon} size={40} strokeWidth={1.25} color={iconColor} />
+            </View>
+          </Animated.View>
+
+          <Animated.View
+            entering={FadeInDown.delay(100).duration(420)}
+            className="max-w-[320px] gap-3">
+            <Text
+              variant="h3"
+              className="border-0 pb-0 text-center text-[26px] leading-[34px]"
+              style={Platform.select({ ios: { letterSpacing: -0.4 } })}>
+              Check your email
+            </Text>
+            <Text variant="muted" className="text-center text-[15px] leading-[23px]">
+              We sent a confirmation link to{' '}
+              <Text className="text-foreground text-[15px] font-semibold">{email.trim()}</Text>. Tap
+              it to finish creating your account.
+            </Text>
+          </Animated.View>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="bg-background flex-1">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1 justify-center px-6 gap-6">
-        <View className="gap-1">
-          <Text variant="h2" className="border-0 pb-0 text-left">
+        className="flex-1 justify-center gap-9 px-6">
+        <Animated.View entering={FadeInDown.duration(420)} className="gap-2">
+          <Text
+            variant="h2"
+            className="border-0 pb-0 text-left text-[32px] leading-[38px]"
+            style={Platform.select({ ios: { letterSpacing: -0.6 } })}>
             Create an account
           </Text>
-          <Text variant="muted">Meet friends in person, then keep the moment going.</Text>
-        </View>
+          <Text variant="muted" className="text-[15px] leading-[23px]">
+            Meet friends in person, then keep the moment going.
+          </Text>
+        </Animated.View>
 
-        <View className="gap-4">
+        <Animated.View entering={FadeInDown.delay(90).duration(420)} className="gap-5">
           <View className="gap-2">
-            <Label nativeID="email">Email</Label>
-            <Input
-              aria-labelledby="email"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              autoComplete="email"
-              keyboardType="email-address"
-              placeholder="you@example.com"
-            />
+            <Label nativeID="email" className="text-muted-foreground text-[13px]">
+              Email
+            </Label>
+            <View className="justify-center">
+              <Input
+                aria-labelledby="email"
+                value={email}
+                onChangeText={setEmail}
+                onFocus={() => setFocused('email')}
+                onBlur={() => setFocused(null)}
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect={false}
+                keyboardType="email-address"
+                textContentType="emailAddress"
+                returnKeyType="next"
+                submitBehavior="submit"
+                onSubmitEditing={() => passwordRef.current?.focus()}
+                placeholder="you@example.com"
+                aria-invalid={Boolean(error)}
+                className={fieldClassName('email')}
+              />
+              <View pointerEvents="none" className="absolute left-4">
+                <HugeiconsIcon
+                  icon={Mail01Icon}
+                  size={20}
+                  strokeWidth={1.6}
+                  color={focused === 'email' ? iconColor : MUTED}
+                />
+              </View>
+            </View>
           </View>
 
           <View className="gap-2">
-            <Label nativeID="password">Password</Label>
-            <Input
-              aria-labelledby="password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoCapitalize="none"
-              placeholder="At least 8 characters"
-            />
+            <Label nativeID="password" className="text-muted-foreground text-[13px]">
+              Password
+            </Label>
+            <View className="justify-center">
+              <Input
+                ref={passwordRef}
+                aria-labelledby="password"
+                value={password}
+                onChangeText={setPassword}
+                onFocus={() => setFocused('password')}
+                onBlur={() => setFocused(null)}
+                secureTextEntry={!passwordVisible}
+                autoCapitalize="none"
+                autoComplete="new-password"
+                textContentType="newPassword"
+                autoCorrect={false}
+                returnKeyType="go"
+                onSubmitEditing={() => {
+                  if (canSubmit) handleSubmitPress();
+                }}
+                placeholder="••••••••"
+                aria-invalid={Boolean(error)}
+                className={cn(fieldClassName('password'), 'pr-14')}
+              />
+              <View pointerEvents="none" className="absolute left-4">
+                <HugeiconsIcon
+                  icon={LockPasswordIcon}
+                  size={20}
+                  strokeWidth={1.6}
+                  color={focused === 'password' ? iconColor : MUTED}
+                />
+              </View>
+              <Pressable
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setPasswordVisible((visible) => !visible);
+                }}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
+                className="absolute right-1 size-12 items-center justify-center rounded-xl active:bg-muted">
+                <HugeiconsIcon
+                  icon={passwordVisible ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                  strokeWidth={1.6}
+                  color={MUTED}
+                />
+              </Pressable>
+            </View>
+
+            <View className="flex-row items-center gap-1.5 pl-1">
+              <HugeiconsIcon
+                icon={CheckmarkCircle02Icon}
+                size={14}
+                strokeWidth={passwordLongEnough ? 2.2 : 1.6}
+                color={passwordLongEnough ? iconColor : MUTED}
+              />
+              <Text
+                className={cn(
+                  'text-[13px]',
+                  passwordLongEnough ? 'text-foreground' : 'text-muted-foreground'
+                )}>
+                At least 8 characters
+              </Text>
+            </View>
           </View>
 
-          {error ? <Text className="text-destructive text-sm">{error}</Text> : null}
+          {error ? (
+            <Animated.View
+              entering={FadeIn.duration(180)}
+              exiting={FadeOut.duration(120)}
+              className="bg-destructive/10 flex-row items-start gap-2 rounded-xl px-3 py-2.5">
+              <View className="pt-px">
+                <HugeiconsIcon
+                  icon={AlertCircleIcon}
+                  size={16}
+                  strokeWidth={1.8}
+                  color={dangerColor}
+                />
+              </View>
+              <Text className="text-destructive flex-1 text-[13px] leading-[19px]">{error}</Text>
+            </Animated.View>
+          ) : null}
 
-          <Button onPress={handleSignUp} disabled={loading || !email || !password}>
-            <Text>{loading ? 'Creating account…' : 'Create account'}</Text>
+          <Button
+            size="lg"
+            onPress={handleSubmitPress}
+            disabled={!canSubmit}
+            className="h-14 rounded-2xl active:scale-[0.96]">
+            {loading ? (
+              <ActivityIndicator
+                size="small"
+                color={scheme === 'dark' ? Colors.light.text : Colors.dark.text}
+              />
+            ) : null}
+            <Text className="text-base font-semibold">
+              {loading ? 'Creating account…' : 'Create account'}
+            </Text>
           </Button>
-        </View>
+        </Animated.View>
 
-        <View className="flex-row justify-center gap-1">
+        <Animated.View
+          entering={FadeInDown.delay(180).duration(420)}
+          className="flex-row items-center justify-center gap-1.5">
           <Text variant="muted">Already have an account?</Text>
-          <Link href="/sign-in">
-            <Text className="text-primary font-medium">Sign in</Text>
+          <Link href="/sign-in" className="px-2 py-2">
+            <Text className="text-primary text-sm font-semibold">Sign in</Text>
           </Link>
-        </View>
+        </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

@@ -1,4 +1,5 @@
-import { DotsThreeIcon, PencilSimpleIcon, TrashIcon } from 'phosphor-react-native';
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import { Delete02Icon, MoreHorizontalIcon, PencilEdit02Icon } from '@hugeicons/core-free-icons';
 import { useState } from 'react';
 import { Modal, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +17,7 @@ export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; on
         hitSlop={10}
         onPress={() => setOpen(true)}
         className="size-8 items-center justify-center rounded-full active:bg-accent">
-        <DotsThreeIcon color="#8a8a90" size={22} weight="bold" />
+        <HugeiconsIcon icon={MoreHorizontalIcon} color="#8a8a90" size={22} strokeWidth={2.5} />
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
@@ -29,7 +30,7 @@ export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; on
                   onEdit();
                 }}
                 className="flex-row items-center gap-3 rounded-xl px-4 py-3 active:bg-accent">
-                <PencilSimpleIcon color="#8a8a90" size={20} />
+                <HugeiconsIcon icon={PencilEdit02Icon} color="#8a8a90" size={20} />
                 <Text className="text-base">Edit caption</Text>
               </Pressable>
               <View className="h-px bg-border" />
@@ -39,7 +40,7 @@ export function MomentActionsMenu({ onEdit, onDelete }: { onEdit: () => void; on
                   onDelete();
                 }}
                 className="flex-row items-center gap-3 rounded-xl px-4 py-3 active:bg-accent">
-                <TrashIcon color="#ef4444" size={20} />
+                <HugeiconsIcon icon={Delete02Icon} color="#ef4444" size={20} />
                 <Text className="text-base text-red-500">Delete moment</Text>
               </Pressable>
             </Pressable>

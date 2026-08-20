@@ -37,7 +37,7 @@ Older relationships: muted, nostalgic, quieter, softer.
 - No mass importing
 - Potentially invite-only (stronger culture, intentional growth, exclusivity, clustered real-world adoption)
 
-### Connect / Reconnect Flow
+### New Connection Flow
 
 - Both users open "Connect"
 - Front-facing camera opens with dynamic QR code
@@ -49,8 +49,19 @@ Older relationships: muted, nostalgic, quieter, softer.
 - "Finding each other..." state
 - Warm success transition
 - Simultaneous success animation on both devices
-- Group hangouts: if multiple people are together, the flow should support connecting/reconnecting with several friends in one session (e.g. scan one after another without leaving the connect screen)
-- MVP default: new connections and reconnects share this exact same flow technically; reconnecting from a friend's profile shows a lighter version (quieter copy, quicker success) instead of the full ritual — see `decisions.md`
+- Group hangouts: if multiple people are together, the flow should support connecting with several friends in one session (e.g. scan one after another without leaving the connect screen)
+- Full ritual — this is a first-time, momentous moment. See `decisions.md` (2026-07-23): reconnecting no longer shares this flow
+
+### Reconnect Flow (Location-Based)
+
+- No camera, no QR, no shared in-the-moment ritual — see `decisions.md` (2026-07-23)
+- App detects proximity to an existing friend in the background and sends a notification
+- Notification is informational, low-pressure — not a demand to act immediately
+- The "you were near this friend" state holds for the rest of the day, so the reconnect can be completed later (e.g. from the friend's profile) rather than in the moment
+- Completing it is a quiet, lightweight action — quick confirmation, not a ritual
+- One-month cooldown per friend: no notification, and no relationship-refresh benefit, if you've already reconnected with them that month
+- Reconnecting again the same day does nothing extra
+- Open question: exact copy/visual for the notification and for the deferred confirmation action
 
 ### Home Screen
 
@@ -98,16 +109,25 @@ Moments should feel:
 
 Connection should feel:
 
-- Like a handshake or shared ritual, not scanning a QR code
+- Like a handshake or shared ritual, not scanning a QR code (applies to new connections; reconnecting is quieter and deferrable — see Reconnect Flow above)
 
 Reconnection should feel:
 
 - Emotionally satisfying (color returns, sharpness restored)
+- Low-pressure and unhurried — the notification can wait until later in the day
 
 ## Naming Direction
 
-App name candidates: Connect, Loop, InTouch
-Rejected names: Ping, Bop, Tappy, FriendBop, CoNek, Letsmeet, MeetMe
+App name candidates: Connect, Loop, InTouch, Friends, Nexus, Linku, YouMe, Together, Us, MyFriends, MyGroup, InCircle, StayClose, Linked, Snapshot, RealYou, Real Life, MyPeople, Flock, Connection, Pod, Unity, Herd, Nest, Gather, Present
+Rejected names: Ping, Bop, Tappy, FriendBop, CoNek, Letsmeet, MeetMe, JustFriends (connotation)
+
+Idea space: birds of a feather (Flock, Nest, Herd, Pod, Gather)
+
+Favorites (emphasize the physical-meeting requirement — you can't add anyone, only someone you've physically met): Handshake, Proximity, IRL, Crossed Paths, Presence, In Person, Encounter, Contact
+
+Leading directions: Handshake, Pod, Feather
+
+General ideas: Orbit, Village, Kindred, Iron, Ember, Bridge
 
 Action language:
 
